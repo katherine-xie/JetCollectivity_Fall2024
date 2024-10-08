@@ -22,8 +22,6 @@
 #include "SHARED_LIBRARY/COORDINATE_FUNCTIONS.h"
 #include "SHARED_LIBRARY/JETFRAME_FUNCTIONS.h"
 
-R__LOAD_LIBRARY(./SHARED_LIBRARY/COORDINATE_FUNCTIONS_C.so);
-
 Pythia8::Pythia pythia; // Initialize Pythia
 Pythia8::ParticleData &particleData = pythia.particleData; // Access the particle data table
 
