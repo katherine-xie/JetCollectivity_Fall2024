@@ -30,15 +30,14 @@ Pythia8::ParticleData &particleData = pythia.particleData; // Access the particl
 std::string title = "pp (13 TeV), N_{ch} #geq 60";
 //std::string fullPathDir = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1050.root"; // Path directory for the source data
 //TFile *f = new TFile(fullPathDir.c_str(), "read"); // Opening file */
-TTreeReader* reader;
 
 // Function prototypes
-TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
-TCanvas* createPtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
-TCanvas* createEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
-TCanvas* createJetFramePtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
-TCanvas* createJetFrameEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
-TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
+TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader);
+TCanvas* createPtHist(TString legendLabel, Int_t colorVal, Int_t markerStyl, TTreeReader* reader);
+TCanvas* createEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader);
+TCanvas* createJetFramePtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader);
+TCanvas* createJetFrameEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader);
+TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader);
 
 void generalDistributions() {
 
@@ -52,16 +51,16 @@ void generalDistributions() {
     std::cout << "Num entries in the chain: " << chain->GetEntries() << std::endl;
     
     // Setting up tree
-    reader = new TTreeReader(chain);
+    TTreeReader* reader = new TTreeReader(chain);
 
     TFile *fout = new TFile("generalHistograms.root", "recreate"); // Creating output file
 
-    TCanvas* c_Nch = createNchHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
-    TCanvas* c_Pt = createPtHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
-    TCanvas* c_Eta = createEtaHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
-    TCanvas* c_JetFramePt = createJetFramePtHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
-    TCanvas* c_JetFrameEta = createJetFrameEtaHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
-    TCanvas* c_InvariantMass = createInvariantMassHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
+    TCanvas* c_Nch = createNchHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
+    TCanvas* c_Pt = createPtHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
+    TCanvas* c_Eta = createEtaHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
+    TCanvas* c_JetFramePt = createJetFramePtHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
+    TCanvas* c_JetFrameEta = createJetFrameEtaHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
+    TCanvas* c_InvariantMass = createInvariantMassHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
 
     delete fout;
     delete reader;
@@ -69,7 +68,7 @@ void generalDistributions() {
 }
 
 // Function to create multiplicity histogram
-TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
+TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader) {
 
     TCanvas *c_Nch = new TCanvas("c_Nch", "Canvas for N_{ch} Distribution", 800, 600);
     c_Nch->cd();
@@ -122,7 +121,7 @@ TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
 }
 
 // Function to create pT histogram
-TCanvas* createPtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
+TCanvas* createPtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader) {
 
     TCanvas *c_Pt = new TCanvas("c_Pt", "Canvas for p_{T} Distribution", 800, 600);
     c_Pt->cd();
@@ -173,7 +172,7 @@ TCanvas* createPtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
 }
 
 // Function to create eta histogram
-TCanvas* createEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
+TCanvas* createEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader) {
 
     TCanvas *c_Eta = new TCanvas("c_Eta", "Canvas for #eta Distribution", 800, 600);
     c_Eta->cd();
@@ -225,7 +224,7 @@ TCanvas* createEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
 }
 
 // Function to create jet pT histogram
-TCanvas* createJetFramePtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
+TCanvas* createJetFramePtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader) {
 
     TCanvas *c_JetFramePt = new TCanvas("c_JetFramePt", "Canvas for p_{T}* Distribution", 800, 600);
     c_JetFramePt->cd();
@@ -302,7 +301,7 @@ TCanvas* createJetFramePtHist(TString legendLabel, Int_t colorVal, Int_t markerS
 }
 
 // Function to create jet pT histogram
-TCanvas* createJetFrameEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
+TCanvas* createJetFrameEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader) {
 
     TCanvas *c_JetFrameEta = new TCanvas("c_JetFrameEta", "Canvas for #eta* Distribution", 800, 600);
     c_JetFrameEta->cd();
@@ -380,7 +379,7 @@ TCanvas* createJetFrameEtaHist(TString legendLabel, Int_t colorVal, Int_t marker
 }
 
 // Function to create invariant mass histogram
-TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
+TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader) {
 
     TCanvas *c_InvariantMass = new TCanvas("c_InvariantMass", "Canvas for Invariant Mass Distribution", 800, 600);
     c_InvariantMass->cd();
