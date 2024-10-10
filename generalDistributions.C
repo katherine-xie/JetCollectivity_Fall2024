@@ -52,7 +52,7 @@ void generalDistributions() {
     std::cout << "Num entries in the chain: " << chain->GetEntries() << std::endl;
     
     // Setting up tree
-    reader = new TTree(chain);
+    reader = new TTreeReader(chain);
 
     TFile *fout = new TFile("generalHistograms.root", "recreate"); // Creating output file
 
