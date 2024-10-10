@@ -42,6 +42,11 @@ TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t mark
 
 void generalDistributions() {
 
+    TChain* chain = chainFiles();
+
+    // Setting up tree
+    reader = new TTreeReader(chain);
+
     // Chaining files together
     TChain *chain = new TChain("trackTree");
     chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
@@ -49,16 +54,8 @@ void generalDistributions() {
     chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_***.root");
     chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_****.root");
 
-    // Setting up tree
-    reader = new TTreeReader(chain);
-
-    // Setup branches for particles
-    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(*reader, "genDau_pt");
-    TTreeReaderValue<std::vector<std::vector<rloat_t>>> pPhi(*reader, "genDau_phi");
-    TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(*reader, "genDau_eta");
-    TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(*reader, "genDau_chg");
-    TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(*reader, "genDau_pid");   
-
+    std::cout << "Num entries in the chain: " << chain->GetEntries() << std::endl;
+    
     TFile *fout = new TFile("generalHistograms.root", "recreate"); // Creating output file
 
     TCanvas* c_Nch = createNchHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
@@ -85,6 +82,13 @@ TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
     hist->SetMarkerStyle(markerStyle); // Pointer style
     hist->SetMarkerSize(0.5); // Pointer size
     hist->SetLineColor(kBlue); // Error bar color
+
+    // Setup branches for particles
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(*reader, "genDau_pt");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(*reader, "genDau_phi");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(*reader, "genDau_eta");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(*reader, "genDau_chg");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(*reader, "genDau_pid");   
 
     reader->Restart();
 
@@ -132,6 +136,13 @@ TCanvas* createPtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
     hist->SetMarkerSize(0.5); // Pointer size
     hist->SetLineColor(kBlue); // Error bar color
 
+    // Setup branches for particles
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(*reader, "genDau_pt");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(*reader, "genDau_phi");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(*reader, "genDau_eta");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(*reader, "genDau_chg");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(*reader, "genDau_pid");  
+
     reader->Restart();
 
     // Event loop
@@ -175,6 +186,13 @@ TCanvas* createEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
     hist->SetMarkerStyle(markerStyle); // Pointer style
     hist->SetMarkerSize(0.5); // Pointer size
     hist->SetLineColor(kBlue); // Error bar color
+
+    // Setup branches for particles
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(*reader, "genDau_pt");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(*reader, "genDau_phi");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(*reader, "genDau_eta");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(*reader, "genDau_chg");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(*reader, "genDau_pid");  
 
     reader->Restart();
 
@@ -220,6 +238,13 @@ TCanvas* createJetFramePtHist(TString legendLabel, Int_t colorVal, Int_t markerS
     hist->SetMarkerStyle(markerStyle); // Pointer style
     hist->SetMarkerSize(0.5); // Pointer size
     hist->SetLineColor(kBlue); // Error bar color
+
+    // Setup branches for particles
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(*reader, "genDau_pt");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(*reader, "genDau_phi");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(*reader, "genDau_eta");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(*reader, "genDau_chg");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(*reader, "genDau_pid");  
 
     // Counter for normalization purposes
     Int_t countSelectedJets = 0;
@@ -291,6 +316,13 @@ TCanvas* createJetFrameEtaHist(TString legendLabel, Int_t colorVal, Int_t marker
     hist->SetMarkerSize(0.5); // Pointer size
     hist->SetLineColor(kBlue); // Error bar color
 
+    // Setup branches for particles
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(*reader, "genDau_pt");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(*reader, "genDau_phi");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(*reader, "genDau_eta");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(*reader, "genDau_chg");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(*reader, "genDau_pid");  
+
     // Counter (for normalization purposes)
     Int_t countSelectedJets = 0;
 
@@ -361,6 +393,13 @@ TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t mark
     hist->SetMarkerStyle(markerStyle); // Pointer style
     hist->SetMarkerSize(0.5); // Pointer size
     hist->SetLineColor(kBlue); // Error bar color
+
+    // Setup branches for particles
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(*reader, "genDau_pt");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(*reader, "genDau_phi");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(*reader, "genDau_eta");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(*reader, "genDau_chg");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(*reader, "genDau_pid");  
 
     // Counter (for normalization purposes)
     Int_t countSelectedJets = 0;
