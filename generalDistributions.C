@@ -42,11 +42,6 @@ TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t mark
 
 void generalDistributions() {
 
-    TChain* chain = chainFiles();
-
-    // Setting up tree
-    reader = new TTreeReader(chain);
-
     // Chaining files together
     TChain *chain = new TChain("trackTree");
     chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
@@ -56,6 +51,9 @@ void generalDistributions() {
 
     std::cout << "Num entries in the chain: " << chain->GetEntries() << std::endl;
     
+    // Setting up tree
+    reader = new TTree(chain);
+
     TFile *fout = new TFile("generalHistograms.root", "recreate"); // Creating output file
 
     TCanvas* c_Nch = createNchHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
