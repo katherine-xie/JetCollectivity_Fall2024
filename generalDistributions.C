@@ -10,6 +10,7 @@
 #include "TVector3.h"
 #include "TView3D.h"
 #include "TCanvas.h"
+#include "TChain.h"
 #include "TLatex.h"
 #include "TLegend.h"
 
@@ -27,19 +28,60 @@ Pythia8::ParticleData &particleData = pythia.particleData; // Access the particl
 
 // Global variables
 std::string title = "pp (13 TeV), N_{ch} #geq 60";
-std::string fullPathDir = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1050.root"; // Path directory for the source data
-TFile *f = new TFile(fullPathDir.c_str(), "read"); // Opening file
+//std::string fullPathDir = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1050.root"; // Path directory for the source data
+//TFile *f = new TFile(fullPathDir.c_str(), "read"); // Opening file */
+TTreeReader* reader;
+TTreeReaderValue<std::vector<std::vector<Float_t>>>* pPt;
+TTreeReaderValue<std::vector<std::vector<Float_t>>>* pPhi;
+TTreeReaderValue<std::vector<std::vector<Float_t>>>* pEta;
+TTreeReaderValue<std::vector<std::vector<Int_t>>>* pChg;
+TTreeReaderValue<std::vector<std::vector<Int_t>>>* pPid;
 
-// Creating TTreeReader object and linking branches
-TTreeReader* reader = new TTreeReader("trackTree");
+// Function prototypes
+TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
+TCanvas* createPtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
+TCanvas* createEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
+TCanvas* createJetFramePtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
+TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
 
-// Setup branches for particles
-TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(*reader, "genDau_pt");
-TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(*reader, "genDau_phi");
-TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(*reader, "genDau_eta");
-TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(*reader, "genDau_chg");
-TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(*reader, "genDau_pid");
+void generalDistributions() {
 
+    // Chaining files together
+    TChain *chain = new TChain("trackTree");
+    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
+    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_**.root");
+    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_***.root");
+    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_****.root");
+
+    // Setting up tree
+    reader = new TTreeReader(chain);
+
+    // Setup branches for particles
+    pPt = new TTreeReaderValue<std::vector<std::vector<Float_t>>>(*reader, "genDau_pt");
+    pPhi = new TTreeReaderValue<std::vector<std::vector<Float_t>>> (*reader, "genDau_phi");
+    pEta = new TTreeReaderValue<std::vector<std::vector<Float_t>>> (*reader, "genDau_eta");
+    pChg = new TTreeReaderValue<std::vector<std::vector<Int_t>>> (*reader, "genDau_chg");
+    pPid = new TTreeReaderValue<std::vector<std::vector<Int_t>>> (*reader, "genDau_pid");   
+
+    TFile *fout = new TFile("generalHistograms.root", "recreate"); // Creating output file
+
+    TCanvas* c_Nch = createNchHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
+    TCanvas* c_Pt = createPtHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
+    TCanvas* c_Eta = createEtaHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
+    TCanvas* c_JetFramePt = createJetFramePtHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
+    TCanvas* c_JetFrameEta = createJetFrameEtaHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
+    TCanvas* c_InvariantMass = createInvariantMassHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
+
+    delete fout;
+    //delete f;
+
+    delete pPt;
+    delete pPhi;
+    delete pEta;
+    delete pChg;
+    delete pPid;
+    delete reader
+}
 
 // Function to create multiplicity histogram
 TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
@@ -384,20 +426,4 @@ TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t mark
 
     delete hist;
     return c_InvariantMass;    
-}
-
-
-void generalDistributions() {
-
-    TFile *fout = new TFile("generalHistograms.root", "recreate"); // Creating output file
-
-    TCanvas* c_Nch = createNchHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
-    TCanvas* c_Pt = createPtHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
-    TCanvas* c_Eta = createEtaHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
-    TCanvas* c_JetFramePt = createJetFramePtHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
-    TCanvas* c_JetFrameEta = createJetFrameEtaHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
-    TCanvas* c_InvariantMass = createInvariantMassHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
-
-    delete fout;
-    delete f;
 }
