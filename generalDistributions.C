@@ -31,42 +31,6 @@ std::string title = "pp (13 TeV), N_{ch} #geq 60";
 //std::string fullPathDir = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1050.root"; // Path directory for the source data
 //TFile *f = new TFile(fullPathDir.c_str(), "read"); // Opening file */
 
-// Function prototypes
-TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader);
-TCanvas* createPtHist(TString legendLabel, Int_t colorVal, Int_t markerStyl, TTreeReader* reader);
-TCanvas* createEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader);
-TCanvas* createJetFramePtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader);
-TCanvas* createJetFrameEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader);
-TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader);
-
-void generalDistributions() {
-
-    // Chaining files together
-    TChain *chain = new TChain("trackTree");
-    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
-    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_**.root");
-    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_***.root");
-    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_****.root");
-
-    std::cout << "Num entries in the chain: " << chain->GetEntries() << std::endl;
-    
-    // Setting up tree
-    TTreeReader* reader = new TTreeReader(chain);
-
-    TFile *fout = new TFile("generalHistograms.root", "recreate"); // Creating output file
-
-    TCanvas* c_Nch = createNchHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
-    TCanvas* c_Pt = createPtHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
-    TCanvas* c_Eta = createEtaHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
-    TCanvas* c_JetFramePt = createJetFramePtHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
-    TCanvas* c_JetFrameEta = createJetFrameEtaHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
-    TCanvas* c_InvariantMass = createInvariantMassHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
-
-    delete fout;
-    delete reader;
-    delete chain;
-}
-
 // Function to create multiplicity histogram
 TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader) {
 
@@ -452,4 +416,32 @@ TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t mark
 
     delete hist;
     return c_InvariantMass;    
+}
+
+void generalDistributions() {
+
+    // Chaining files together
+    TChain *chain = new TChain("trackTree");
+    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
+    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_**.root");
+    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_***.root");
+    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_****.root");
+
+    std::cout << "Num entries in the chain: " << chain->GetEntries() << std::endl;
+    
+    // Setting up tree
+    TTreeReader* reader = new TTreeReader(chain);
+
+    TFile *fout = new TFile("generalHistograms.root", "recreate"); // Creating output file
+
+    TCanvas* c_Nch = createNchHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
+    TCanvas* c_Pt = createPtHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
+    TCanvas* c_Eta = createEtaHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
+    TCanvas* c_JetFramePt = createJetFramePtHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
+    TCanvas* c_JetFrameEta = createJetFrameEtaHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
+    TCanvas* c_InvariantMass = createInvariantMassHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
+
+    delete fout;
+    delete reader;
+    delete chain;
 }
