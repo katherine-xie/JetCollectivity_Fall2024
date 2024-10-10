@@ -31,11 +31,6 @@ std::string title = "pp (13 TeV), N_{ch} #geq 60";
 //std::string fullPathDir = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1050.root"; // Path directory for the source data
 //TFile *f = new TFile(fullPathDir.c_str(), "read"); // Opening file */
 TTreeReader* reader;
-TTreeReaderValue<std::vector<std::vector<Float_t>>>* pPt;
-TTreeReaderValue<std::vector<std::vector<Float_t>>>* pPhi;
-TTreeReaderValue<std::vector<std::vector<Float_t>>>* pEta;
-TTreeReaderValue<std::vector<std::vector<Int_t>>>* pChg;
-TTreeReaderValue<std::vector<std::vector<Int_t>>>* pPid;
 
 // Function prototypes
 TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
@@ -58,11 +53,11 @@ void generalDistributions() {
     reader = new TTreeReader(chain);
 
     // Setup branches for particles
-    pPt = new TTreeReaderValue<std::vector<std::vector<Float_t>>>(*reader, "genDau_pt");
-    pPhi = new TTreeReaderValue<std::vector<std::vector<Float_t>>> (*reader, "genDau_phi");
-    pEta = new TTreeReaderValue<std::vector<std::vector<Float_t>>> (*reader, "genDau_eta");
-    pChg = new TTreeReaderValue<std::vector<std::vector<Int_t>>> (*reader, "genDau_chg");
-    pPid = new TTreeReaderValue<std::vector<std::vector<Int_t>>> (*reader, "genDau_pid");   
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(*reader, "genDau_pt");
+    TTreeReaderValue<std::vector<std::vector<rloat_t>>> pPhi(*reader, "genDau_phi");
+    TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(*reader, "genDau_eta");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(*reader, "genDau_chg");
+    TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(*reader, "genDau_pid");   
 
     TFile *fout = new TFile("generalHistograms.root", "recreate"); // Creating output file
 
@@ -74,14 +69,8 @@ void generalDistributions() {
     TCanvas* c_InvariantMass = createInvariantMassHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21);
 
     delete fout;
-    //delete f;
-
-    delete pPt;
-    delete pPhi;
-    delete pEta;
-    delete pChg;
-    delete pPid;
     delete reader;
+    delete chain;
 }
 
 // Function to create multiplicity histogram
@@ -107,9 +96,9 @@ TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
         // Loop through daughter branches (jets)
         for (Int_t i = 0; i < pPt->size(); i++) {
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
                 // Checking if particle is charged
-                if ((pChg)[i][j] == 0) {continue;}
+                if ((*pChg)[i][j] == 0) {continue;}
                 nchCounter++;
             }
         }
@@ -150,10 +139,10 @@ TCanvas* createPtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
         // Loop through daughter branches (jets)
         for (Int_t i = 0; i < pPt->size(); i++) {
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
                 // Checking if particle is charged
-                if ((pChg)[i][j] == 0) {continue;}
-                hist->Fill((pPt)[i][j]);
+                if ((*pChg)[i][j] == 0) {continue;}
+                hist->Fill((*pPt)[i][j]);
             }
         }
     }
@@ -194,10 +183,10 @@ TCanvas* createEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
         // Loop through daughter branches (jets)
         for (Int_t i = 0; i < pPt->size(); i++) {
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
                 // Checking if particle is charged
-                if ((pChg)[i][j] == 0) {continue;}
-                hist->Fill((pEta)[i][j]);
+                if ((*pChg)[i][j] == 0) {continue;}
+                hist->Fill((*pEta)[i][j]);
             }
         }
     }
@@ -247,24 +236,24 @@ TCanvas* createJetFramePtHist(TString legendLabel, Int_t colorVal, Int_t markerS
 
             // Vector for each jet with components pT, eta, phi
             TVector3 jet;
-            jet.SetPtEtaPhi(calculateJetPt((pPt)[i], (pPhi)[i]),  
-                            calculateJetEta((pPt)[i], (pEta)[i], (pPhi)[i]),
-                            calculateJetPhi((pPt)[i], (pPhi)[i])); 
+            jet.SetPtEtaPhi(calculateJetPt((*pPt)[i], (*pPhi)[i]),  
+                            calculateJetEta((*pPt)[i], (*pEta)[i], (*pPhi)[i]),
+                            calculateJetPhi((*pPt)[i], (*pPhi)[i])); 
 
             std::vector<TVector3> particlesVec; // Vector to hold the particles 
 
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
 
                 // Checking if particle is charged
-                if ((pChg)[i][j] == 0) {continue;}
+                if ((*pChg)[i][j] == 0) {continue;}
 
                 // Initialize vector (for individual particles)
                 TVector3 particle;
                     
-                particle.SetPtEtaPhi((pPt)[i][j],
-                                     (pEta)[i][j],
-                                     (pPhi)[i][j]);
+                particle.SetPtEtaPhi((*pPt)[i][j],
+                                     (*pEta)[i][j],
+                                     (*pPhi)[i][j]);
 
                 particlesVec.push_back(particle);
             }
@@ -315,26 +304,26 @@ TCanvas* createJetFrameEtaHist(TString legendLabel, Int_t colorVal, Int_t marker
 
             // Vector for each jet with components pT, eta, phi
             TVector3 jet;
-            jet.SetPtEtaPhi(calculateJetPt((pPt)[i], (pPhi)[i]),  
-                            calculateJetEta((pPt)[i], (pEta)[i], (pPhi)[i]),
-                            calculateJetPhi((pPt)[i], (pPhi)[i])); 
+            jet.SetPtEtaPhi(calculateJetPt((*pPt)[i], (*pPhi)[i]),  
+                            calculateJetEta((*pPt)[i], (*pEta)[i], (*pPhi)[i]),
+                            calculateJetPhi((*pPt)[i], (*pPhi)[i])); 
 
             countSelectedJets++;
 
             std::vector<TVector3> particlesVec; // Vector to hold the particles 
 
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
 
                 // Checking if particle is charged
-                if ((pChg)[i][j] == 0) {continue;}
+                if ((*pChg)[i][j] == 0) {continue;}
 
                 // Initialize vector (for individual particles)
                 TVector3 particle;
                     
-                particle.SetPtEtaPhi((pPt)[i][j],
-                                     (pEta)[i][j],
-                                     (pPhi)[i][j]);
+                particle.SetPtEtaPhi((*pPt)[i][j],
+                                     (*pEta)[i][j],
+                                     (*pPhi)[i][j]);
 
                 particlesVec.push_back(particle);
             }
@@ -391,15 +380,15 @@ TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t mark
             Float_t sumPz = 0;
 
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
 
                 // Checking if particle is charged
-                if ((pChg)[i][j] == 0) {continue;}
+                if ((*pChg)[i][j] == 0) {continue;}
 
-                Float_t px = calculatePx((pPt)[i][j], (pPhi)[i][j]);
-                Float_t py = calculatePy((pPt)[i][j], (pPhi)[i][j]);
-                Float_t pz = calculatePz((pPt)[i][j], (pEta)[i][j]);
-                Float_t E = calculateEnergy(px, py, pz, particleData.m0((pPid)[i][j]));
+                Float_t px = calculatePx((*pPt)[i][j], (*pPhi)[i][j]);
+                Float_t py = calculatePy((*pPt)[i][j], (*pPhi)[i][j]);
+                Float_t pz = calculatePz((*pPt)[i][j], (*pEta)[i][j]);
+                Float_t E = calculateEnergy(px, py, pz, particleData.m0((*pPid)[i][j]));
 
                 sumPx += px;
                 sumPy += py;
