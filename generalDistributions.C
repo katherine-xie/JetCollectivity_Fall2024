@@ -42,6 +42,7 @@ TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
 TCanvas* createPtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
 TCanvas* createEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
 TCanvas* createJetFramePtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
+TCanvas* createJetFrameEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
 TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t markerStyle);
 
 void generalDistributions() {
@@ -80,7 +81,7 @@ void generalDistributions() {
     delete pEta;
     delete pChg;
     delete pPid;
-    delete reader
+    delete reader;
 }
 
 // Function to create multiplicity histogram
@@ -106,9 +107,9 @@ TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
         // Loop through daughter branches (jets)
         for (Int_t i = 0; i < pPt->size(); i++) {
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < (pPt)[i].size(); j++) {
                 // Checking if particle is charged
-                if ((*pChg)[i][j] == 0) {continue;}
+                if ((pChg)[i][j] == 0) {continue;}
                 nchCounter++;
             }
         }
@@ -149,10 +150,10 @@ TCanvas* createPtHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
         // Loop through daughter branches (jets)
         for (Int_t i = 0; i < pPt->size(); i++) {
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < (pPt)[i].size(); j++) {
                 // Checking if particle is charged
-                if ((*pChg)[i][j] == 0) {continue;}
-                hist->Fill((*pPt)[i][j]);
+                if ((pChg)[i][j] == 0) {continue;}
+                hist->Fill((pPt)[i][j]);
             }
         }
     }
@@ -193,10 +194,10 @@ TCanvas* createEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle) {
         // Loop through daughter branches (jets)
         for (Int_t i = 0; i < pPt->size(); i++) {
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < (pPt)[i].size(); j++) {
                 // Checking if particle is charged
-                if ((*pChg)[i][j] == 0) {continue;}
-                hist->Fill((*pEta)[i][j]);
+                if ((pChg)[i][j] == 0) {continue;}
+                hist->Fill((pEta)[i][j]);
             }
         }
     }
@@ -246,24 +247,24 @@ TCanvas* createJetFramePtHist(TString legendLabel, Int_t colorVal, Int_t markerS
 
             // Vector for each jet with components pT, eta, phi
             TVector3 jet;
-            jet.SetPtEtaPhi(calculateJetPt((*pPt)[i], (*pPhi)[i]),  
-                            calculateJetEta((*pPt)[i], (*pEta)[i], (*pPhi)[i]),
-                            calculateJetPhi((*pPt)[i], (*pPhi)[i])); 
+            jet.SetPtEtaPhi(calculateJetPt((pPt)[i], (pPhi)[i]),  
+                            calculateJetEta((pPt)[i], (pEta)[i], (pPhi)[i]),
+                            calculateJetPhi((pPt)[i], (pPhi)[i])); 
 
             std::vector<TVector3> particlesVec; // Vector to hold the particles 
 
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < (pPt)[i].size(); j++) {
 
                 // Checking if particle is charged
-                if ((*pChg)[i][j] == 0) {continue;}
+                if ((pChg)[i][j] == 0) {continue;}
 
                 // Initialize vector (for individual particles)
                 TVector3 particle;
                     
-                particle.SetPtEtaPhi((*pPt)[i][j],
-                                     (*pEta)[i][j],
-                                     (*pPhi)[i][j]);
+                particle.SetPtEtaPhi((pPt)[i][j],
+                                     (pEta)[i][j],
+                                     (pPhi)[i][j]);
 
                 particlesVec.push_back(particle);
             }
@@ -314,26 +315,26 @@ TCanvas* createJetFrameEtaHist(TString legendLabel, Int_t colorVal, Int_t marker
 
             // Vector for each jet with components pT, eta, phi
             TVector3 jet;
-            jet.SetPtEtaPhi(calculateJetPt((*pPt)[i], (*pPhi)[i]),  
-                            calculateJetEta((*pPt)[i], (*pEta)[i], (*pPhi)[i]),
-                            calculateJetPhi((*pPt)[i], (*pPhi)[i])); 
+            jet.SetPtEtaPhi(calculateJetPt((pPt)[i], (pPhi)[i]),  
+                            calculateJetEta((pPt)[i], (pEta)[i], (pPhi)[i]),
+                            calculateJetPhi((pPt)[i], (pPhi)[i])); 
 
             countSelectedJets++;
 
             std::vector<TVector3> particlesVec; // Vector to hold the particles 
 
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < (pPt)[i].size(); j++) {
 
                 // Checking if particle is charged
-                if ((*pChg)[i][j] == 0) {continue;}
+                if ((pChg)[i][j] == 0) {continue;}
 
                 // Initialize vector (for individual particles)
                 TVector3 particle;
                     
-                particle.SetPtEtaPhi((*pPt)[i][j],
-                                     (*pEta)[i][j],
-                                     (*pPhi)[i][j]);
+                particle.SetPtEtaPhi((pPt)[i][j],
+                                     (pEta)[i][j],
+                                     (pPhi)[i][j]);
 
                 particlesVec.push_back(particle);
             }
@@ -390,15 +391,15 @@ TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t mark
             Float_t sumPz = 0;
 
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < (pPt)[i].size(); j++) {
 
                 // Checking if particle is charged
-                if ((*pChg)[i][j] == 0) {continue;}
+                if ((pChg)[i][j] == 0) {continue;}
 
-                Float_t px = calculatePx((*pPt)[i][j], (*pPhi)[i][j]);
-                Float_t py = calculatePy((*pPt)[i][j], (*pPhi)[i][j]);
-                Float_t pz = calculatePz((*pPt)[i][j], (*pEta)[i][j]);
-                Float_t E = calculateEnergy(px, py, pz, particleData.m0((*pPid)[i][j]));
+                Float_t px = calculatePx((pPt)[i][j], (pPhi)[i][j]);
+                Float_t py = calculatePy((pPt)[i][j], (pPhi)[i][j]);
+                Float_t pz = calculatePz((pPt)[i][j], (pEta)[i][j]);
+                Float_t E = calculateEnergy(px, py, pz, particleData.m0((pPid)[i][j]));
 
                 sumPx += px;
                 sumPy += py;
