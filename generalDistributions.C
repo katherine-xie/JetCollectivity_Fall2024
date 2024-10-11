@@ -423,9 +423,6 @@ void generalDistributions() {
     // Chaining files together
     TChain *chain = new TChain("trackTree");
     chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
-    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_**.root");
-    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_***.root");
-    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_****.root");
 
     std::cout << "Num entries in the chain: " << chain->GetEntries() << std::endl;
     
