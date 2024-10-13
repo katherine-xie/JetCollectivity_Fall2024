@@ -26,6 +26,43 @@
 Pythia8::Pythia pythia; // Initialize Pythia
 Pythia8::ParticleData &particleData = pythia.particleData; // Access the particle data table
 
+TChain* createValidChain(const char* treeName, TChain* originalChain) {
+    
+    TChain* validChain = new TChain(treeName);
+    
+    // Iterate through all files in the original chain
+    TList* fileList = originalChain->GetListOfFiles();
+
+    for (int i = 0; i < fileList->GetSize(); i++) {
+
+        TString fileName = fileList->At(i)->GetTitle();
+        TFile* file = TFile::Open(fileName, "read");
+        
+        // Check if the file is valid and can be opened
+        if (file && !file->IsZombie()) {
+
+            TTree* currTree = dynamic_cast<TTree*>(file->Get(treeName));
+
+            // Checking if tree is valid (not a nullptr)
+            if (currTree) {
+                validChain->AddFile(fileName); // Add valid file to the new chain
+            } 
+            
+            else {
+                std::cout << "Tree not found in file: " << fileName << std::endl;
+            }
+            file->Close();
+
+        } 
+        else {
+            std::cout << "Invalid file: " << fileName << std::endl;
+        }
+    }
+    
+    return validChain;
+}
+
+
 // Function to create eta histogram
 TCanvas* createEtaHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, TTreeReader* reader) {
 
@@ -158,20 +195,23 @@ TCanvas* createJetFrameEtaHist(TString legendLabel, Int_t colorVal, Int_t marker
 
 void etaDistributions() {
 
-    TChain *chain = new TChain("trackTree");
-    chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
+    TChain *originalChain = new TChain("trackTree");
+    originalChain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
     //chain->Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root");    
     //chain->Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1001.root");
     
-    // Get the tree and check if it's valid
-    TTree *testTree = chain->GetTree();
-
-    if (testTree == nullptr) {
+    /*
+    // Checking for null pointers
+    if (currTree == nullptr) {
         std::cout << "There is an invalid tree (null pointer)" << std::endl;
         return;
-    }
- 
-    TObjArray *fileList = chain->GetListOfFiles();
+    } */
+
+    // Removing invalid tress
+    TChain* newChain = createValidChain("trackTree", originalChain);
+    delete originalChain;
+
+    TObjArray *fileList = newChain->GetListOfFiles();
 
     Int_t countFiles = 0;
     for (Int_t i = 0; i < fileList->GetEntries(); i++) {
@@ -181,9 +221,9 @@ void etaDistributions() {
     }
 
     std::cout << "Total number of files: " << countFiles << std::endl;
-    std::cout << "Total number of entries: " << chain->GetEntries() << std::endl;
+    std::cout << "Total number of entries: " << newChain->GetEntries() << std::endl;
 
-    TTreeReader *reader = new TTreeReader(chain);
+    TTreeReader *reader = new TTreeReader(newChain);
 
     TFile *fout = new TFile("testEtaHist.root", "recreate"); // Creating output file
 
