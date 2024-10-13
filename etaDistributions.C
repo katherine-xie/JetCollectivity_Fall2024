@@ -33,7 +33,7 @@ TChain* createValidChain(const char* treeName, TChain* originalChain) {
     // Iterate through all files in the original chain
     TObjArray* fileList = originalChain->GetListOfFiles();
 
-    for (int i = 0; i < fileList->GetSize(); i++) {
+    for (int i = 0; i < fileList->GetEntries(); i++) {
 
         TString fileName = fileList->At(i)->GetTitle();
         TFile* file = TFile::Open(fileName, "read");
