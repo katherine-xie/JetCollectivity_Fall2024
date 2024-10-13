@@ -162,7 +162,15 @@ void etaDistributions() {
     chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
     //chain->Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root");    
     //chain->Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1001.root");
+    
+    // Get the tree and check if it's valid
+    TTree *testTree = chain->GetTree();
 
+    if (testTree == nullptr) {
+        std::cout << "There is an invalid tree (null pointer)" << std::endl;
+        return;
+    }
+ 
     TObjArray *fileList = chain->GetListOfFiles();
 
     Int_t countFiles = 0;
@@ -176,13 +184,6 @@ void etaDistributions() {
     std::cout << "Total number of entries: " << chain->GetEntries() << std::endl;
 
     TTreeReader *reader = new TTreeReader(chain);
-
-    // Setup branches for particles
-    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(*reader, "genDau_pt");
-    TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(*reader, "genDau_phi");
-    TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(*reader, "genDau_eta");
-    TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(*reader, "genDau_chg");
-    TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(*reader, "genDau_pid");  
 
     TFile *fout = new TFile("testEtaHist.root", "recreate"); // Creating output file
 
