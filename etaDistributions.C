@@ -31,7 +31,7 @@ TChain* createValidChain(const char* treeName, TChain* originalChain) {
     TChain* validChain = new TChain(treeName);
     
     // Iterate through all files in the original chain
-    TList* fileList = originalChain->GetListOfFiles();
+    TObjArray* fileList = originalChain->GetListOfFiles();
 
     for (int i = 0; i < fileList->GetSize(); i++) {
 
