@@ -100,7 +100,7 @@ TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t mark
     return c_InvariantMass;    
 }
 
-void testTChain() {
+void invariantMassDistribution() {
 
     TChain *chain = new TChain("trackTree");
     chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");

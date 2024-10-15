@@ -98,6 +98,7 @@ TCanvas* createPtJetFrameHist(TString legendLabel, Int_t colorVal, Int_t markerS
     gPad->SetLogy();
     c_JetFramePt->Write();
     c_JetFramePt->Close();
+
     delete hist;
     return c_JetFramePt;    
 }
@@ -129,9 +130,8 @@ void ptJetFrameDistribution() {
 
     TFile *fout = new TFile("ptJetFrame.root", "recreate"); // Creating output file
 
-    TCanvas* c_etaJetFrame = createPtJetFrameHist("pp (13 TeV, N_{ch} #geq 60)", kBlack, 21, reader);
+    TCanvas* c_PtJetFrame = createPtJetFrameHist("pp (13 TeV, N_{ch} #geq 60)", kBlack, 21, reader);
 
-    delete c_etaJetFrame;
-    delete chain;
+    delete c_PtJetFrame;
     delete fout;
 }
