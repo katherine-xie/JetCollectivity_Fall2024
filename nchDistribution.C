@@ -72,7 +72,7 @@ TCanvas* createNchHist(TString legendLabel, Int_t colorVal, Int_t markerStyle, T
     hist->GetXaxis()->SetTitle("N_{ch}");
 
     hist->Draw("E");
-    //gPad->SetLogy();
+    gPad->SetLogy();
     c_Nch->Write();
     c_Nch->Close();
     delete hist;
