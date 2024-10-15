@@ -132,7 +132,6 @@ void etaJetFrameDistribution() {
 
     TCanvas* c_etaJetFrame = createEtaJetFrameHist("pp (13 TeV, N_{ch} #geq 60)", kBlack, 21, reader);
 
-    delete chain;
-    delete fout;
     delete c_etaJetFrame;
+    delete fout;
 }
