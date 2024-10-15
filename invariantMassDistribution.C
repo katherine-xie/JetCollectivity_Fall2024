@@ -46,8 +46,6 @@ TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t mark
     TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(*reader, "genDau_chg");
     TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(*reader, "genDau_pid");  
 
-    // Counter (for normalization purposes)
-    Int_t countSelectedJets = 0;
 
     reader->Restart();
 
@@ -87,7 +85,7 @@ TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t mark
 
     // ***** NORMALIZATION *****
     Float_t binWidth = 410.0/410.0;
-    hist->Scale(1.0/(binWidth * countSelectedJets));
+    hist->Scale(1.0/(binWidth));
 
     hist->Draw("E");
     hist->GetYaxis()->SetTitle("#frac{dN_{entries}}{d#Deltam_{jet}}");
@@ -102,10 +100,12 @@ TCanvas* createInvariantMassHist(TString legendLabel, Int_t colorVal, Int_t mark
     return c_InvariantMass;    
 }
 
-void invariantMassDistribution() {
+void testTChain() {
 
     TChain *chain = new TChain("trackTree");
     chain->Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
+    //chain->Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root");    
+    //chain->Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1001.root");
 
     TObjArray *fileList = chain->GetListOfFiles();
 
@@ -127,11 +127,10 @@ void invariantMassDistribution() {
     TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(*reader, "genDau_chg");
     TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(*reader, "genDau_pid");  
 
-    TFile *fout = new TFile("invariantMass.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("testMass.root", "recreate"); // Creating output file
 
-    TCanvas* c_InvariantMass = createInvariantMassHist("pp (13 TeV, N_{ch} #geq 60)", kBlack, 21, reader);
+    TCanvas* c_InvariantMass = createInvariantMassHist("pp (13 Tev, N_{ch} #geq 60)", kBlack, 21, reader);
 
     delete c_InvariantMass;
-    delete chain;
     delete fout;
 }
