@@ -1,3 +1,6 @@
+#ifndef COORD_FUNCTIONS_H
+#define COORD_FUNCTIONS_H
+
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
@@ -18,8 +21,6 @@
 #include <vector>
 #include <string>
 #include <Pythia8/Pythia.h> 
-
-#include "COORDINATE_FUNCTIONS.h"
 
 // Daughter Particle Calculations
 Float_t calculatePt(Float_t px, Float_t py) {return sqrt(px*px + py*py);}
@@ -194,3 +195,5 @@ void formatHelixWhiteCanvas(THelix *h, float pz, float pt, int color, bool doWTA
   //h->SetRange(-2,2,kLabX);
   //h->SetRange(-2,2,kLabY);
 }
+
+#endif
