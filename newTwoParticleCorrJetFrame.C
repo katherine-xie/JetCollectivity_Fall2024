@@ -20,15 +20,15 @@
 #include <string>
 #include <vector>
 
-// #include "./SHARED_LIBRARY/COORDINATE_FUNCTIONS.h"
-// #include "./SHARED_LIBRARY/JETFRAME_FUNCTIONS.h"
-// R__LOAD_LIBRARY(./SHARED_LIBRARY/COORDINATE_FUNCTIONS_C.so);
+//#include "./OLD_LIBRARY/COORDINATE_FUNCTIONS.h"
+//#include "./OLD_LIBRARY/JETFRAME_FUNCTIONS.h"
+//R__LOAD_LIBRARY(./OLD_LIBRARY/COORDINATE_FUNCTIONS_C.so);
 
 #include "./SHARED_LIBRARY/COORDINATE_FUNCTIONS.h"
 #include "./SHARED_LIBRARY/JETFRAME_FUNCTIONS.h"
 
 // // Global variables
-std::string title = "pp (13 TeV)";
+std::string title = "pp (N_ch >= 60, 13 TeV)";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
@@ -39,17 +39,17 @@ TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(reader, "genDau_eta");
 TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(reader, "genDau_chg");
 TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(reader, "genDau_pid");  
 
-// std::string fullPathDir = "/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root";
-// TFile *f = new TFile(fullPathDir.c_str(), "read"); // Opening file
 
 void initializeChain() {
 
+    // // Local chain
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1001.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1002.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1003.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
 
+    // Server chain
     chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
 
     TObjArray *fileList = chain.GetListOfFiles();
@@ -393,7 +393,7 @@ int newTwoParticleCorrJetFrame() {
         jetPhiVals_AllEvents.push_back(jetPhiVals_SingleEvent);
     }
 
-    TFile *fout = new TFile("testing.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("testServer_HeaderFiles.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
@@ -467,51 +467,51 @@ int newTwoParticleCorrJetFrame() {
     truncatedHist.Draw("SURF1");
     cTruncated->Write();
 
-    // // Creating canvas for the projected delta phi histgram
-    // TCanvas *cProjection = new TCanvas("cProjection", "Canvas for the Projected Distributions", 800, 600);
+    // Creating canvas for the projected delta phi histgram
+    TCanvas *cProjection = new TCanvas("cProjection", "Canvas for the Projected Distributions", 800, 600);
 
-    // cProjection->cd();
+    cProjection->cd();
     
-    // TH2F* correctedCopy = (TH2F*)correctedHist.Clone();
-    // correctedCopy->SetAxisRange(0, 2, "X");
+    TH2F* correctedCopy = (TH2F*)correctedHist.Clone();
+    correctedCopy->SetAxisRange(0, 2, "X");
 
-    // TH1D* projectedHist = correctedCopy->ProjectionY("projectedHist", 1, -1);
+    TH1D* projectedHist = correctedCopy->ProjectionY("projectedHist", 1, -1);
 
-    // projectedHist->SetLineWidth(2);
-    // projectedHist->SetLineColor(kBlue);
-    // projectedHist->Draw("HIST");
-    // projectedHist->GetXaxis()->SetTitleOffset(0.5);
-    // projectedHist->GetXaxis()->SetTitleFont(132);
+    projectedHist->SetLineWidth(2);
+    projectedHist->SetLineColor(kBlue);
+    projectedHist->Draw("HIST");
+    projectedHist->GetXaxis()->SetTitleOffset(0.5);
+    projectedHist->GetXaxis()->SetTitleFont(132);
 
-    // std::string projectionTitle = "Projection of Corrected Distribution for " + title;
-    // projectedHist->SetTitle(projectionTitle.c_str());
+    std::string projectionTitle = "Projection of Corrected Distribution for " + title;
+    projectedHist->SetTitle(projectionTitle.c_str());
 
-    // gPad->SetGrid();
+    gPad->SetGrid();
     
-    // gPad->SetGrid();
-    // TH1D *projectedSignalHist = simpleSignalHist.ProjectionY("projectedSignalHist", 1, -1);
-    // projectedSignalHist->SetLineWidth(2);
-    // projectedSignalHist->SetLineColor(kBlue);
-    // projectedSignalHist->Draw("HIST L");
+    gPad->SetGrid();
+    TH1D *projectedSignalHist = simpleSignalHist.ProjectionY("projectedSignalHist", 1, -1);
+    projectedSignalHist->SetLineWidth(2);
+    projectedSignalHist->SetLineColor(kBlue);
+    projectedSignalHist->Draw("HIST L");
 
-    // cProjection->cd(2);
-    // gPad->SetGrid();
-    // TH1D *projectedBackgroundHist = simpleBackgroundHist.ProjectionY("projectedBackgroundHist", 1, -1);
-    // projectedBackgroundHist->SetMinimum(0);
-    // //projectedBackgroundHist->SetMaximum(50e6);
-    // projectedBackgroundHist->SetLineWidth(2);
-    // projectedBackgroundHist->SetLineColor(kBlue);
-    // projectedBackgroundHist->Draw("HIST L SAME"); 
+    cProjection->cd(2);
+    gPad->SetGrid();
+    TH1D *projectedBackgroundHist = simpleBackgroundHist.ProjectionY("projectedBackgroundHist", 1, -1);
+    projectedBackgroundHist->SetMinimum(0);
+    //projectedBackgroundHist->SetMaximum(50e6);
+    projectedBackgroundHist->SetLineWidth(2);
+    projectedBackgroundHist->SetLineColor(kBlue);
+    projectedBackgroundHist->Draw("HIST L SAME"); 
 
-    // cProjection->Write(); 
-    // projectedHist->Write(); 
+    cProjection->Write(); 
+    projectedHist->Write(); 
 
-    // delete cSignal;
-    // delete cEtaPhi;
-    // delete cBackground;
-    // delete cCorrected;
-    // delete cTruncated;
-    // delete cProjection;  
+    delete cSignal;
+    delete cEtaPhi;
+    delete cBackground;
+    delete cCorrected;
+    delete cTruncated;
+    delete cProjection;  
 
     fout->Close();
     return 0;
