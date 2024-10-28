@@ -50,7 +50,11 @@ void initializeChain() {
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
 
     // Server chain
-    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
+    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1000.root");
+    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1001.root");
+    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1002.root");
+    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1003.root");
+
 
     TObjArray *fileList = chain.GetListOfFiles();
 
@@ -313,15 +317,15 @@ int newTwoParticleCorrJetFrame() {
 
         // ***** JET LOOP *****
         for (Int_t i = 0; i < pPt->size(); i++) {
-
+           // std::cout << "i: " << i<< std::endl;
             // Calculating the pT and etas of the ith jet (NOTE: I am using ALL particles including the non-charged ones)
             Float_t currPtOfJet = calculateJetPt((*pPt)[i], (*pPhi)[i]);
             Float_t currEtaOfJet = calculateJetEta((*pPt)[i], (*pEta)[i], (*pPhi)[i]); 
-
+            //std::cout << "Macro: " << currEtaOfJet << std::endl;
             ptOfJetVals_SingleEvent.push_back(currPtOfJet);
             etaOfJetVals_SingleEvent.push_back(currEtaOfJet);
 
-            // std::cout << "Event " << reader->GetCurrentEntry() << ", Jet " << i << 
+            // std::cout << "Event " << reader.GetCurrentEntry() << ", Jet " << i << 
             // ": Pt of Jet = " << currPtOfJet << 
             // ", Eta of Jet = " << currEtaOfJet << std::endl;
         }
@@ -393,7 +397,7 @@ int newTwoParticleCorrJetFrame() {
         jetPhiVals_AllEvents.push_back(jetPhiVals_SingleEvent);
     }
 
-    TFile *fout = new TFile("testServer_SharedLib.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("testServer.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
