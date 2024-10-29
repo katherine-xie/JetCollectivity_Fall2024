@@ -39,21 +39,25 @@ TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(reader, "genDau_eta");
 TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(reader, "genDau_chg");
 TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(reader, "genDau_pid");  
 
+TTreeReaderValue<std::vector<Float_t>> jPt(reader, "genJetPt");
+TTreeReaderValue<std::vector<Float_t>> jEta(reader, "genJetEta");
+TTreeReaderValue<std::vector<Float_t>> jPhi(reader, "genJetPhi");
+
 
 void initializeChain() {
 
     // // Local chain
-    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root");
-    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1001.root");
-    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1002.root");
-    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1003.root");
-    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
+    chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root");
+    chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1001.root");
+    chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1002.root");
+    chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1003.root");
+    chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
 
     // Server chain
-    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1000.root");
-    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1001.root");
-    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1002.root");
-    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1003.root");
+    // chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1000.root");
+    // chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1001.root");
+    // chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1002.root");
+    // chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_1003.root");
 
 
     TObjArray *fileList = chain.GetListOfFiles();
@@ -291,8 +295,8 @@ int newTwoParticleCorrJetFrame() {
     std::vector<Int_t> multVec; // Stores multiplicity values; vector has same size as num. events
 
     // The following vectors have dimensions of event{jet{particles}}
-    std::vector<std::vector<std::vector<Float_t>>> jetEtaVals_AllEvents; // Stores rotated eta vals in jet frame
-    std::vector<std::vector<std::vector<Float_t>>> jetPhiVals_AllEvents; // Stores rotated phi vals in jet frame
+    std::vector<std::vector<std::vector<Float_t>>> jetEtaVals_AllEvents; // Stores eta* vals in jet frame
+    std::vector<std::vector<std::vector<Float_t>>> jetPhiVals_AllEvents; // Stores phi* vals in jet frame
 
     //reader->Restart(); // Ensuring event loop starts from beginning
 
@@ -310,57 +314,66 @@ int newTwoParticleCorrJetFrame() {
         //std::cout << "Index " << reader->GetCurrentEntry() << ": " << multiplicity << std::endl; 
 
 
-        // ***** Finding the jet pT's and eta (of the whole jet) and storing it in a vector 
-        // This is for the jet selection criteria
-        std::vector<Float_t> ptOfJetVals_SingleEvent;
-        std::vector<Float_t> etaOfJetVals_SingleEvent;
+        // SELF DEFINED JET FUNCTIONS ARE PROBLEMATIC
+        // // ***** Finding the jet pT's and eta (of the whole jet) and storing it in a vector 
+        // // This is for the jet selection criteria
+        // std::vector<Float_t> ptOfJetVals_SingleEvent;
+        // std::vector<Float_t> etaOfJetVals_SingleEvent;
+        // // ***** JET LOOP *****
+        // for (Int_t i = 0; i < pPt->size(); i++) {
+        //    // std::cout << "i: " << i<< std::endl;
+        //     // Calculating the pT and etas of the ith jet (NOTE: I am using ALL particles including the non-charged ones)
+        //     Float_t currPtOfJet = calculateJetPt((*pPt)[i], (*pPhi)[i]);
+        //     Float_t currEtaOfJet = calculateJetEta((*pPt)[i], (*pEta)[i], (*pPhi)[i]); 
+        //     //std::cout << "Macro: " << currEtaOfJet << std::endl;
+        //     ptOfJetVals_SingleEvent.push_back(currPtOfJet);
+        //     etaOfJetVals_SingleEvent.push_back(currEtaOfJet);
+        //     // std::cout << "Event " << reader.GetCurrentEntry() << ", Jet " << i << 
+        //     // ": Pt of Jet = " << currPtOfJet << 
+        //     // ", Eta of Jet = " << currEtaOfJet << std::endl;
+        // }
 
-        // ***** JET LOOP *****
-        for (Int_t i = 0; i < pPt->size(); i++) {
-           // std::cout << "i: " << i<< std::endl;
-            // Calculating the pT and etas of the ith jet (NOTE: I am using ALL particles including the non-charged ones)
-            Float_t currPtOfJet = calculateJetPt((*pPt)[i], (*pPhi)[i]);
-            Float_t currEtaOfJet = calculateJetEta((*pPt)[i], (*pEta)[i], (*pPhi)[i]); 
-            //std::cout << "Macro: " << currEtaOfJet << std::endl;
-            ptOfJetVals_SingleEvent.push_back(currPtOfJet);
-            etaOfJetVals_SingleEvent.push_back(currEtaOfJet);
-
-            // std::cout << "Event " << reader.GetCurrentEntry() << ", Jet " << i << 
-            // ": Pt of Jet = " << currPtOfJet << 
-            // ", Eta of Jet = " << currEtaOfJet << std::endl;
-        }
-
-
+        Int_t currEventIndex = reader.GetCurrentEntry();
+        
         // ***** Calculating the coordinates in the jet frame *****
         std::vector<std::vector<Float_t>> jetEtaVals_SingleEvent;
         std::vector<std::vector<Float_t>> jetPhiVals_SingleEvent;
 
         // Jet Loop
-        for (Int_t i = 0; i < pPt->size(); i++) {
+        for (Int_t i = 0; i < jPt->size(); i++) {
 
             std::vector<Float_t> jetEtaVals_PerJet;
             std::vector<Float_t> jetPhiVals_PerJet;
 
-            if (std::isnan(ptOfJetVals_SingleEvent[i])) {continue;}
-            if (std::isnan(etaOfJetVals_SingleEvent[i])) {continue;}
+            // if (std::isnan(ptOfJetVals_SingleEvent[i])) {continue;}
+            // if (std::isnan(etaOfJetVals_SingleEvent[i])) {continue;}
+            
+            if (std::isnan((*jPt)[i])) {continue;}
+            if (std::isnan((*jEta)[i])) {continue;}
 
             // Applying jet selection criteria
-            if (ptOfJetVals_SingleEvent[i] <= 550) {continue;}
-            if (fabs(etaOfJetVals_SingleEvent[i]) >= 1.6) {continue;}
+            if ((*jPt)[i] <= 550) {continue;}
+            if (fabs((*jEta)[i]) >= 1.6) {continue;}
 
-            std::cout << "Event " << reader.GetCurrentEntry() << ", Jet " << i << 
-            ": Pt of Jet = " << ptOfJetVals_SingleEvent[i] << 
-            ", Eta of Jet = " << etaOfJetVals_SingleEvent[i] << std::endl;
+            std::cout << "Event " << currEventIndex << ", Jet " << i << 
+            ": Pt of Jet = " << (*jPt)[i] << 
+            ", Eta of Jet = " << (*jEta)[i] << std::endl;
 
             // Vector for each jet with components pT, eta, phi
             TVector3 jet;
-                
-            jet.SetPtEtaPhi(calculateJetPt((*pPt)[i], (*pPhi)[i]),  
-                            calculateJetEta((*pPt)[i], (*pEta)[i], (*pPhi)[i]),
-                            calculateJetPhi((*pPt)[i], (*pPhi)[i])); 
+
+            Double_t ptOfJet = (*jPt)[i];
+            Double_t etaOfJet = (*jEta)[i];
+            Double_t phiOfJet = (*jPhi)[i];
+
+            jet.SetPtEtaPhi(ptOfJet, etaOfJet, phiOfJet); 
+
+            // jet.SetPtEtaPhi(calculateJetPt((*pPt)[i], (*pPhi)[i]),  
+            //                 calculateJetEta((*pPt)[i], (*pEta)[i], (*pPhi)[i]),
+            //                 calculateJetPhi((*pPt)[i], (*pPhi)[i])); 
 
             // Loop through particles within a jet
-            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
+            for (Int_t j = 0; j < jPt->size(); j++) {
 
                 if ((*pChg)[i][j] == 0) {continue;}
 
@@ -416,106 +429,106 @@ int newTwoParticleCorrJetFrame() {
     etaPhiHist.Draw("SURF1");
     cEtaPhi->Write();
 
-    // Creating canvas for the background histogram
-    TCanvas *cBackground = new TCanvas("cBackground", "Canvas for the Background Distribution", 800, 600);
-    TH2F simpleBackgroundHist = createBackgroundDist_JetFrame(multVec, 10, simpleSignalHist, etaPhiHist);
+    // // Creating canvas for the background histogram
+    // TCanvas *cBackground = new TCanvas("cBackground", "Canvas for the Background Distribution", 800, 600);
+    // TH2F simpleBackgroundHist = createBackgroundDist_JetFrame(multVec, 10, simpleSignalHist, etaPhiHist);
 
-    cBackground->cd();
-    simpleBackgroundHist.Draw("SURF1");
-    cBackground->Write();
+    // cBackground->cd();
+    // simpleBackgroundHist.Draw("SURF1");
+    // cBackground->Write();
 
-    // Creating canvas for the corrected signal distribution
-    TCanvas *cCorrected = new TCanvas("cCorrected", "Canvas for the Corrected Signal Distribution", 1000, 1000);
-    TH2F correctedHist = simpleSignalHist;
+    // // Creating canvas for the corrected signal distribution
+    // TCanvas *cCorrected = new TCanvas("cCorrected", "Canvas for the Corrected Signal Distribution", 1000, 1000);
+    // TH2F correctedHist = simpleSignalHist;
 
-    correctedHist.Divide(&simpleBackgroundHist);
-    std::cout << "B(0,0): " << simpleBackgroundHist.GetBinContent(simpleBackgroundHist.FindBin(0,0)) << std::endl;
-    correctedHist.Scale(simpleBackgroundHist.GetBinContent(simpleBackgroundHist.FindBin(0,0)));
+    // correctedHist.Divide(&simpleBackgroundHist);
+    // std::cout << "B(0,0): " << simpleBackgroundHist.GetBinContent(simpleBackgroundHist.FindBin(0,0)) << std::endl;
+    // correctedHist.Scale(simpleBackgroundHist.GetBinContent(simpleBackgroundHist.FindBin(0,0)));
 
-    cCorrected->cd();
-    cCorrected->SetFillColor(0);
-    correctedHist.Draw("SURF1");
+    // cCorrected->cd();
+    // cCorrected->SetFillColor(0);
+    // correctedHist.Draw("SURF1");
 
-    // ***** HISTOGRAM CUSTOMIZATION ***** //
-    std::string correctedTitle = "Corrected Signal Distribution for " + title;
-    correctedHist.SetTitle(correctedTitle.c_str());
-    //correctedHist.SetTitle("");
+    // // ***** HISTOGRAM CUSTOMIZATION ***** //
+    // std::string correctedTitle = "Corrected Signal Distribution for " + title;
+    // correctedHist.SetTitle(correctedTitle.c_str());
+    // //correctedHist.SetTitle("");
 
-    correctedHist.GetZaxis()->SetTitle("C(#Delta#eta*, #Delta#phi*)");
-    correctedHist.GetZaxis()->SetTitleSize(0.04);
-    //correctedHist.GetZaxis()->SetTitleOffset(0.01);
+    // correctedHist.GetZaxis()->SetTitle("C(#Delta#eta*, #Delta#phi*)");
+    // correctedHist.GetZaxis()->SetTitleSize(0.04);
+    // //correctedHist.GetZaxis()->SetTitleOffset(0.01);
 
-    correctedHist.GetXaxis()->SetTitleOffset(1);
-    correctedHist.GetXaxis()->SetTitleSize(0.05);
+    // correctedHist.GetXaxis()->SetTitleOffset(1);
+    // correctedHist.GetXaxis()->SetTitleSize(0.05);
 
-    correctedHist.GetYaxis()->SetTitleOffset(1);
-    correctedHist.GetYaxis()->SetTitleSize(0.05);
+    // correctedHist.GetYaxis()->SetTitleOffset(1);
+    // correctedHist.GetYaxis()->SetTitleSize(0.05);
 
-    correctedHist.SetTitleOffset(1.1, "Z");
-    correctedHist.SetTitleFont(132, "T");
-    correctedHist.SetTitleFont(132, "XYZ");
-    correctedHist.SetLabelFont(132, "T");
-    correctedHist.SetLabelFont(132, "XYZ");
+    // correctedHist.SetTitleOffset(1.1, "Z");
+    // correctedHist.SetTitleFont(132, "T");
+    // correctedHist.SetTitleFont(132, "XYZ");
+    // correctedHist.SetLabelFont(132, "T");
+    // correctedHist.SetLabelFont(132, "XYZ");
 
-    correctedHist.SetAxisRange(-2, 2, "X");
-    correctedHist.SetAxisRange(-2, 5, "Y");
+    // correctedHist.SetAxisRange(-2, 2, "X");
+    // correctedHist.SetAxisRange(-2, 5, "Y");
 
-    cCorrected->Write(); 
+    // cCorrected->Write(); 
 
-    // Copying the corrected histogram and truncating the z axis (for a better view)
-    TCanvas *cTruncated = new TCanvas("cTruncated", "Canvas for the Truncated Corrected Distribution", 1000, 1000);
-    cTruncated->cd();
+    // // Copying the corrected histogram and truncating the z axis (for a better view)
+    // TCanvas *cTruncated = new TCanvas("cTruncated", "Canvas for the Truncated Corrected Distribution", 1000, 1000);
+    // cTruncated->cd();
 
-    TH2F truncatedHist = correctedHist;
-    truncatedHist.SetMaximum(0.13);
-    truncatedHist.Draw("SURF1");
-    cTruncated->Write();
+    // TH2F truncatedHist = correctedHist;
+    // truncatedHist.SetMaximum(0.13);
+    // truncatedHist.Draw("SURF1");
+    // cTruncated->Write();
 
-    // Creating canvas for the projected delta phi histgram
-    TCanvas *cProjection = new TCanvas("cProjection", "Canvas for the Projected Distributions", 800, 600);
+    // // Creating canvas for the projected delta phi histgram
+    // TCanvas *cProjection = new TCanvas("cProjection", "Canvas for the Projected Distributions", 800, 600);
 
-    cProjection->cd();
+    // cProjection->cd();
     
-    TH2F* correctedCopy = (TH2F*)correctedHist.Clone();
-    correctedCopy->SetAxisRange(0, 2, "X");
+    // TH2F* correctedCopy = (TH2F*)correctedHist.Clone();
+    // correctedCopy->SetAxisRange(0, 2, "X");
 
-    TH1D* projectedHist = correctedCopy->ProjectionY("projectedHist", 1, -1);
+    // TH1D* projectedHist = correctedCopy->ProjectionY("projectedHist", 1, -1);
 
-    projectedHist->SetLineWidth(2);
-    projectedHist->SetLineColor(kBlue);
-    projectedHist->Draw("HIST");
-    projectedHist->GetXaxis()->SetTitleOffset(0.5);
-    projectedHist->GetXaxis()->SetTitleFont(132);
+    // projectedHist->SetLineWidth(2);
+    // projectedHist->SetLineColor(kBlue);
+    // projectedHist->Draw("HIST");
+    // projectedHist->GetXaxis()->SetTitleOffset(0.5);
+    // projectedHist->GetXaxis()->SetTitleFont(132);
 
-    std::string projectionTitle = "Projection of Corrected Distribution for " + title;
-    projectedHist->SetTitle(projectionTitle.c_str());
+    // std::string projectionTitle = "Projection of Corrected Distribution for " + title;
+    // projectedHist->SetTitle(projectionTitle.c_str());
 
-    gPad->SetGrid();
+    // gPad->SetGrid();
     
-    gPad->SetGrid();
-    TH1D *projectedSignalHist = simpleSignalHist.ProjectionY("projectedSignalHist", 1, -1);
-    projectedSignalHist->SetLineWidth(2);
-    projectedSignalHist->SetLineColor(kBlue);
-    projectedSignalHist->Draw("HIST L");
+    // gPad->SetGrid();
+    // TH1D *projectedSignalHist = simpleSignalHist.ProjectionY("projectedSignalHist", 1, -1);
+    // projectedSignalHist->SetLineWidth(2);
+    // projectedSignalHist->SetLineColor(kBlue);
+    // projectedSignalHist->Draw("HIST L");
 
-    cProjection->cd(2);
-    gPad->SetGrid();
-    TH1D *projectedBackgroundHist = simpleBackgroundHist.ProjectionY("projectedBackgroundHist", 1, -1);
-    projectedBackgroundHist->SetMinimum(0);
-    //projectedBackgroundHist->SetMaximum(50e6);
-    projectedBackgroundHist->SetLineWidth(2);
-    projectedBackgroundHist->SetLineColor(kBlue);
-    projectedBackgroundHist->Draw("HIST L SAME"); 
+    // cProjection->cd(2);
+    // gPad->SetGrid();
+    // TH1D *projectedBackgroundHist = simpleBackgroundHist.ProjectionY("projectedBackgroundHist", 1, -1);
+    // projectedBackgroundHist->SetMinimum(0);
+    // //projectedBackgroundHist->SetMaximum(50e6);
+    // projectedBackgroundHist->SetLineWidth(2);
+    // projectedBackgroundHist->SetLineColor(kBlue);
+    // projectedBackgroundHist->Draw("HIST L SAME"); 
 
-    cProjection->Write(); 
-    projectedHist->Write(); 
+    // // cProjection->Write(); 
+    // // projectedHist->Write(); 
 
-    delete cSignal;
-    delete cEtaPhi;
-    delete cBackground;
-    delete cCorrected;
-    delete cTruncated;
-    delete cProjection;  
+    // delete cSignal;
+    // delete cEtaPhi;
+    // delete cBackground;
+    // delete cCorrected;
+    // delete cTruncated;
+    // delete cProjection;  
 
     fout->Close();
     return 0;
