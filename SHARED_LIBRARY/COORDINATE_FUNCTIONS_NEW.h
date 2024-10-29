@@ -1,5 +1,5 @@
-#ifndef COORD_FUNCTIONS_H
-#define COORD_FUNCTIONS_H
+#ifndef COORD_FUNCTIONS_NEW_H
+#define COORD_FUNCTIONS_NEW_H
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -48,7 +48,7 @@ Float_t calculateEnergy(Float_t px, Float_t py, Float_t pz, Float_t m0) {return 
 
 // Jet Calculations
 Float_t calculateJetPt(std::vector<Float_t> pT, std::vector<Float_t> phi) {
-    Float_t pxSum, pySum;
+    Float_t pxSum, pySum = 0;
     for (Int_t i = 0; i < pT.size(); i++) {
         pxSum += calculatePx(pT[i], phi[i]);
         pySum += calculatePy(pT[i], phi[i]);
@@ -57,13 +57,20 @@ Float_t calculateJetPt(std::vector<Float_t> pT, std::vector<Float_t> phi) {
 } 
 
 Float_t calculateJetEta(std::vector<Float_t> pT, std::vector<Float_t> eta, std::vector<Float_t> phi) {
-    Float_t pxSum, pySum, pzSum;
+    Float_t pxSum, pySum, pzSum = 0;
+    //std::cout <<" init "<< pzSum << std::endl;
     for (Int_t i = 0; i < pT.size(); i++) {
         pxSum += calculatePx(pT[i], phi[i]);
         pySum += calculatePy(pT[i], phi[i]);
+
+        //std::cout<< "pT : " << pT[i] << ", eta: "<< eta[i] << ", " << calculatePz(pT[i], eta[i])<<std::endl;
         pzSum += calculatePz(pT[i], eta[i]);
     }
+   //std::cout << "end " << pzSum << std::endl;
+    //std::cout<< pxSum << ", " << pySum << ", " << pzSum << ", " << calculateEta(calculateTheta(pxSum, pySum, pzSum))<<std::endl;
+    std::cout << "function: " << calculateEta(calculateTheta(pxSum, pySum, pzSum))<<std::endl;
     return calculateEta(calculateTheta(pxSum, pySum, pzSum));
+    
 }
 
 Float_t calculateJetPhi(std::vector<Float_t> pT, std::vector<Float_t> phi) {

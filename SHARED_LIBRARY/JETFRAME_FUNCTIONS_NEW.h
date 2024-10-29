@@ -1,5 +1,5 @@
-#ifndef JETFRAME_FUNCTIONS_H
-#define JETFRAME_FUNCTIONS_H
+#ifndef JETFRAME_FUNCTIONS_NEW_H
+#define JETFRAME_FUNCTIONS_NEW_H
 
 #include "TVector3.h"
 #include "TMath.h"
