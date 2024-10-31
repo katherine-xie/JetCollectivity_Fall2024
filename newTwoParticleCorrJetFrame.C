@@ -155,7 +155,7 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
     std::cout << "Number of selected jets: " << jetCounter << std::endl;
 
     // ***** NORMALIZATION ******
-    hSignal.Scale(1.0/(reader->GetEntries()));
+    hSignal.Scale(1.0/(reader.GetEntries()));
     hSignal.Scale(1.0/numTrigg); 
 
     // ***** HISTOGRAM CUSTOMIZATION ******
