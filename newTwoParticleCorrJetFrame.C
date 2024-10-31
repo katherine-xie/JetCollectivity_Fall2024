@@ -27,7 +27,7 @@
 // #include "./HEADER_FILES/coordinateTools.h"
 // #include "./HEADER_FILES/myFunctions.h"
 
-// Run of server:
+// Run on server:
 #include "./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS.h"
 #include "./SHARED_LIB_SERVER/JETFRAME_FUNCTIONS.h"
 R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
@@ -78,6 +78,8 @@ void initializeChain() {
 TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector, 
                                std::vector<std::vector<std::vector<Float_t>>> jetEtaVals_AllEvents,
                                std::vector<std::vector<std::vector<Float_t>>> jetPhiVals_AllEvents) {
+
+    std::cout << "Calculating Signal Distribution ... " << std::endl;
     
     std::string signalTitle = "Normalized Signal Distribution for " + title;
 
@@ -104,7 +106,7 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
         if (multiplicityVector[eventIndex] == 0) {continue;}
         numSelectedEvents++;
 
-        std::cout << "************** In event " << eventIndex << ", Num jets:  " << jPt->size() << " **************" << std::endl;
+        std::cout << "************** Event " << eventIndex << ", Num jets:  " << jPt->size() << " **************" << std::endl;
 
         // Looping through jets in the jetEtaVals vector
         for (Int_t jet = 0; jet < jetEtaVals_AllEvents[eventIndex].size(); jet++) {
@@ -133,7 +135,7 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
 
                     // Calculating delta eta and delta phi
                     Float_t deltaEta = fabs(eta2 - eta1);
-                    std::cout << "delta eta: " << deltaEta << std::endl;
+                    //std::cout << "delta eta: " << deltaEta << std::endl;
 
                     Float_t deltaPhi = TMath::ACos(TMath::Cos(phi2-phi1));
 
@@ -179,6 +181,8 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
 TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
                                std::vector<std::vector<std::vector<Float_t>>> jetEtaVals_AllEvents,
                                std::vector<std::vector<std::vector<Float_t>>> jetPhiVals_AllEvents) {
+
+    std::cout << "Calculating Eta Phi Distribution ... " << std::endl;
 
     // First intialize the eta-phi distribution for all particles
     TH2F etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 50, 0, 7, 50, -TMath::Pi(), TMath::Pi());
@@ -227,6 +231,8 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
 
 // Function that returns the distribution of the simple mixed-event background function
 TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t numMixFactor, TH2F hSignal, TH2F etaPhiDist) {
+
+    std::cout << "Calculating Bsckground Distribution ... " << std::endl;
 
     std::string backgroundTitle = "Background Distribution for " + title;
 
