@@ -63,6 +63,7 @@ void initializeChain() {
     for (Int_t i = 0; i < 10; i++) {   
         std::string str = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_";
         str.append(std::to_string((i+1)));
+        str.append(".root");
         chain.Add(str.c_str());
     }
 
