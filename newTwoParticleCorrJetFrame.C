@@ -20,12 +20,18 @@
 #include <string>
 #include <vector>
 
-#include "./OLD_LIBRARY/COORDINATE_FUNCTIONS.h"
-#include "./OLD_LIBRARY/JETFRAME_FUNCTIONS.h"
-R__LOAD_LIBRARY(./OLD_LIBRARY/COORDINATE_FUNCTIONS_C.so);
+// #include "./COMPILED_FILES/coordinateTools_SharedLib.h"
+// #include "./COMPILED_FILES/myFunctions_SharedLib.h"
+// R__LOAD_LIBRARY(./COMPILED_FILES/myFunctions_SharedLib_C.so);
 
-// #include "./SHARED_LIBRARY/COORDINATE_FUNCTIONS_NEW.h"
-// #include "./SHARED_LIBRARY/JETFRAME_FUNCTIONS_NEW.h"
+// #include "./HEADER_FILES/coordinateTools.h"
+// #include "./HEADER_FILES/myFunctions.h"
+
+// Run of server:
+#include "./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS.h"
+#include "./SHARED_LIB_SERVER/JETFRAME_FUNCTIONS.h"
+R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
+
 
 // // Global variables
 std::string title = "pp (N_ch >= 60, 13 TeV)";
@@ -46,7 +52,7 @@ TTreeReaderValue<std::vector<Float_t>> jPhi(reader, "genJetPhi");
 
 void initializeChain() {
 
-    // // // Local chain
+    // // Local chain
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1001.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1002.root");
@@ -98,9 +104,13 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
         if (multiplicityVector[eventIndex] == 0) {continue;}
         numSelectedEvents++;
 
+        std::cout << "************** In event " << eventIndex << ", Num jets:  " << jPt->size() << " **************" << std::endl;
+
         // Looping through jets in the jetEtaVals vector
         for (Int_t jet = 0; jet < jetEtaVals_AllEvents[eventIndex].size(); jet++) {
             jetCounter++;
+
+            std::cout << "Jet " << jet << ", Num particles: " << jetEtaVals_AllEvents[eventIndex][jet].size() << std::endl;
             
             // ***** PARTICLE LOOP ******
             // Particle 1 Loop
@@ -113,15 +123,17 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
                 //std::cout << "Event " << eventIndex << ": Trigger Particle " << i << ", eta: " << eta1 << ", phi: " << phi1 << std::endl;
 
                 // Particle 2 Loop
-                for (Int_t j = i + 1; j < jetEtaVals_AllEvents[eventIndex].size(); j++) {
+                for (Int_t j = i + 1; j < jetEtaVals_AllEvents[eventIndex][jet].size(); j++) {
 
                     // Calculating eta and phi for particle 2
                     Float_t eta2 = jetEtaVals_AllEvents[eventIndex][jet][j];
                     Float_t phi2 = jetPhiVals_AllEvents[eventIndex][jet][j];
+                    // std::cout << "Event " << eventIndex << ": Trigg " << i << ", eta: " << eta1 << ", phi: " << phi1 << std::endl;
+                    // std::cout<< "               Assoc " << j << ": eta " << eta2 << ", phi " << phi2 << std::endl;
 
                     // Calculating delta eta and delta phi
                     Float_t deltaEta = fabs(eta2 - eta1);
-                    //if (deltaEta <= 2) {continue;}
+                    std::cout << "delta eta: " << deltaEta << std::endl;
 
                     Float_t deltaPhi = TMath::ACos(TMath::Cos(phi2-phi1));
 
@@ -141,7 +153,7 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
 
     // ***** NORMALIZATION ******
     //hSignal.Scale(1.0/(reader->GetEntries()));
-    hSignal.Scale(1.0/numTrigg); 
+    //hSignal.Scale(1.0/numTrigg); 
 
     // ***** HISTOGRAM CUSTOMIZATION ******
     hSignal.SetXTitle("#Delta#eta*");
@@ -336,8 +348,9 @@ int newTwoParticleCorrJetFrame() {
         std::vector<std::vector<Float_t>> jetPhiVals_SingleEvent;
 
         // Jet Loop
-        for (Int_t i = 0; i < jPt->size(); i++) {
+        for (Int_t i = 0; i < pPt->size(); i++) {
 
+            //std::cout << "Jet size (before cut)" << i << ": " << (*pPt)[i].size() << std::endl;
             std::vector<Float_t> jetEtaVals_PerJet;
             std::vector<Float_t> jetPhiVals_PerJet;
 
@@ -351,9 +364,9 @@ int newTwoParticleCorrJetFrame() {
             if ((*jPt)[i] <= 550) {continue;}
             if (fabs((*jEta)[i]) >= 1.6) {continue;}
 
-            std::cout << "Event " << currEventIndex << ", Jet " << i << 
-            ": Pt of Jet = " << (*jPt)[i] << 
-            ", Eta of Jet = " << (*jEta)[i] << std::endl;
+            // std::cout << "Event " << currEventIndex << ", Jet " << i << 
+            // ": Pt of Jet = " << (*jPt)[i] << 
+            // ", Eta of Jet = " << (*jEta)[i] << std::endl;
 
             // Vector for each jet with components pT, eta, phi
             TVector3 jet;
@@ -368,8 +381,9 @@ int newTwoParticleCorrJetFrame() {
             //                 calculateJetEta((*pPt)[i], (*pEta)[i], (*pPhi)[i]),
             //                 calculateJetPhi((*pPt)[i], (*pPhi)[i])); 
 
+            
             // Loop through particles within a jet
-            for (Int_t j = 0; j < jPt->size(); j++) {
+            for (Int_t j = 0; j < (*pPt)[i].size(); j++) {
 
                 if ((*pChg)[i][j] == 0) {continue;}
 
@@ -398,15 +412,34 @@ int newTwoParticleCorrJetFrame() {
                 // ", Phi = " << currJetPhi << 
                 // ", jT = " << currJetPt << std::endl;
             }
+
+            // Skip adding the jet if there are no particles that meet the criteria
+            if (jetEtaVals_PerJet.size() == 0) {continue;}            
+            if (jetPhiVals_PerJet.size() == 0) {continue;}
+
             jetEtaVals_SingleEvent.push_back(jetEtaVals_PerJet);
             jetPhiVals_SingleEvent.push_back(jetPhiVals_PerJet);
         }
 
+        //if (jetEtaVals_SingleEvent.size() == 0) {continue;}            
+        //if (jetPhiVals_SingleEvent.size() == 0) {continue;}
         jetEtaVals_AllEvents.push_back(jetEtaVals_SingleEvent);
         jetPhiVals_AllEvents.push_back(jetPhiVals_SingleEvent);
     }
 
-    TFile *fout = new TFile("testServer_SharedLib.root", "recreate"); // Creating output file
+    // for (Int_t i = 0; i < jetEtaVals_AllEvents.size(); i++) {
+    //     std::cout << "******** Event " << i << "********" << std::endl;
+
+    //     for (Int_t j = 0; j < jetEtaVals_AllEvents[i].size(); j++) {
+    //         std::cout << "Jet " << j << ", Num particles: " << jetEtaVals_AllEvents[i][j].size() << std::endl;
+
+    //         for (Int_t k = 0; k < jetEtaVals_AllEvents[i][j].size(); k++) {
+    //             std::cout << "Eta*: " << jetEtaVals_AllEvents[i][j][k] << ", Phi*: " << jetPhiVals_AllEvents[i][j][k] << std::endl;
+    //         }
+    //     }
+    // }
+
+    TFile *fout = new TFile("testServer_CompiledFiles.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
@@ -480,41 +513,41 @@ int newTwoParticleCorrJetFrame() {
     truncatedHist.Draw("SURF1");
     cTruncated->Write();
 
-    // Creating canvas for the projected delta phi histgram
-    TCanvas *cProjection = new TCanvas("cProjection", "Canvas for the Projected Distributions", 800, 600);
+    // // Creating canvas for the projected delta phi histgram
+    // TCanvas *cProjection = new TCanvas("cProjection", "Canvas for the Projected Distributions", 800, 600);
 
-    cProjection->cd();
+    // cProjection->cd();
     
-    TH2F* correctedCopy = (TH2F*)correctedHist.Clone();
-    correctedCopy->SetAxisRange(0, 2, "X");
+    // TH2F* correctedCopy = (TH2F*)correctedHist.Clone();
+    // correctedCopy->SetAxisRange(0, 2, "X");
 
-    TH1D* projectedHist = correctedCopy->ProjectionY("projectedHist", 1, -1);
+    // TH1D* projectedHist = correctedCopy->ProjectionY("projectedHist", 1, -1);
 
-    projectedHist->SetLineWidth(2);
-    projectedHist->SetLineColor(kBlue);
-    projectedHist->Draw("HIST");
-    projectedHist->GetXaxis()->SetTitleOffset(0.5);
-    projectedHist->GetXaxis()->SetTitleFont(132);
+    // projectedHist->SetLineWidth(2);
+    // projectedHist->SetLineColor(kBlue);
+    // projectedHist->Draw("HIST");
+    // projectedHist->GetXaxis()->SetTitleOffset(0.5);
+    // projectedHist->GetXaxis()->SetTitleFont(132);
 
-    std::string projectionTitle = "Projection of Corrected Distribution for " + title;
-    projectedHist->SetTitle(projectionTitle.c_str());
+    // std::string projectionTitle = "Projection of Corrected Distribution for " + title;
+    // projectedHist->SetTitle(projectionTitle.c_str());
 
-    gPad->SetGrid();
+    // gPad->SetGrid();
     
-    gPad->SetGrid();
-    TH1D *projectedSignalHist = simpleSignalHist.ProjectionY("projectedSignalHist", 1, -1);
-    projectedSignalHist->SetLineWidth(2);
-    projectedSignalHist->SetLineColor(kBlue);
-    projectedSignalHist->Draw("HIST L");
+    // gPad->SetGrid();
+    // TH1D *projectedSignalHist = simpleSignalHist.ProjectionY("projectedSignalHist", 1, -1);
+    // projectedSignalHist->SetLineWidth(2);
+    // projectedSignalHist->SetLineColor(kBlue);
+    // projectedSignalHist->Draw("HIST L");
 
-    cProjection->cd(2);
-    gPad->SetGrid();
-    TH1D *projectedBackgroundHist = simpleBackgroundHist.ProjectionY("projectedBackgroundHist", 1, -1);
-    projectedBackgroundHist->SetMinimum(0);
-    //projectedBackgroundHist->SetMaximum(50e6);
-    projectedBackgroundHist->SetLineWidth(2);
-    projectedBackgroundHist->SetLineColor(kBlue);
-    projectedBackgroundHist->Draw("HIST L SAME"); 
+    // cProjection->cd(2);
+    // gPad->SetGrid();
+    // TH1D *projectedBackgroundHist = simpleBackgroundHist.ProjectionY("projectedBackgroundHist", 1, -1);
+    // projectedBackgroundHist->SetMinimum(0);
+    // //projectedBackgroundHist->SetMaximum(50e6);
+    // projectedBackgroundHist->SetLineWidth(2);
+    // projectedBackgroundHist->SetLineColor(kBlue);
+    // projectedBackgroundHist->Draw("HIST L SAME"); 
 
     // cProjection->Write(); 
     // projectedHist->Write(); 
@@ -523,8 +556,8 @@ int newTwoParticleCorrJetFrame() {
     delete cEtaPhi;
     delete cBackground;
     delete cCorrected;
-    delete cTruncated;
-    delete cProjection;  
+    // delete cTruncated;
+    // delete cProjection;  
 
     fout->Close();
     return 0;
