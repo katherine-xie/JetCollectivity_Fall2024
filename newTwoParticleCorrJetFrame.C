@@ -150,12 +150,13 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
             } 
         }
     }
+    std::cout << "Number of trigger particles: " << numTrigg << std::endl;
     std::cout << "Number of selected events for the signal distribution: " << numSelectedEvents << std::endl;
     std::cout << "Number of selected jets: " << jetCounter << std::endl;
 
     // ***** NORMALIZATION ******
-    //hSignal.Scale(1.0/(reader->GetEntries()));
-    //hSignal.Scale(1.0/numTrigg); 
+    hSignal.Scale(1.0/(reader->GetEntries()));
+    hSignal.Scale(1.0/numTrigg); 
 
     // ***** HISTOGRAM CUSTOMIZATION ******
     hSignal.SetXTitle("#Delta#eta*");
@@ -242,8 +243,10 @@ TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t 
     // ***** PSEUDOPARTICLE MIXING *****
     // Calculating the number of pseudoparticles samples:
     // Note: numPseudo needs to first be a double to avoid limits with the int datatype
-    int numSigEntries = hSignal.GetEntries();
+    double numSigEntries = hSignal.GetEntries();
     double numPseudo = (1 + floor(sqrt(1+(4*2*numMixFactor*(double)numSigEntries))))/2;; // Not sure why floor is added after the sqrt (used in Austin's code)
+    
+    numSigEntries = (int)numSigEntries;
     numPseudo = (int)numPseudo; // Casting back into int
 
     std::cout << "Number of entries in signal distribution: " << numSigEntries << std::endl;
