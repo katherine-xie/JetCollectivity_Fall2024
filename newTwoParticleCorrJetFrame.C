@@ -59,8 +59,13 @@ void initializeChain() {
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1003.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
 
-    //Server chain
-    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
+    // Limited Server chain
+    for (Int_t i = 0; i < 10; i++) {   
+        chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
+    }
+
+    // //Server chain
+    // chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
 
     TObjArray *fileList = chain.GetListOfFiles();
 
@@ -243,6 +248,7 @@ TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t 
     // ***** PSEUDOPARTICLE MIXING *****
     // Calculating the number of pseudoparticles samples:
     // Note: numPseudo needs to first be a double to avoid limits with the int datatype
+    std::cout << "Values of entries directly from the histogram: " << hSignal.GetEntries();
     double numSigEntries = hSignal.GetEntries();
     double numPseudo = (1 + floor(sqrt(1+(4*2*numMixFactor*(double)numSigEntries))))/2;; // Not sure why floor is added after the sqrt (used in Austin's code)
     
@@ -448,7 +454,7 @@ int newTwoParticleCorrJetFrame() {
     //     }
     // }
 
-    TFile *fout = new TFile("testServer_CompiledFiles.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("testServer_CompiledFiles_Limited.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
