@@ -20,9 +20,10 @@
 #include <string>
 #include <vector>
 
-// #include "./COMPILED_FILES/coordinateTools_SharedLib.h"
-// #include "./COMPILED_FILES/myFunctions_SharedLib.h"
-// R__LOAD_LIBRARY(./COMPILED_FILES/myFunctions_SharedLib_C.so);
+// Run locally
+// #include "./SHARED_LIB_LOCAL/coordinateTools_SharedLib.h"
+// #include "./SHARED_LIB_LOCAL/myFunctions_SharedLib.h"
+// R__LOAD_LIBRARY(./SHARED_LIB_LOCAL/myFunctions_SharedLib_C.so);
 
 // #include "./HEADER_FILES/coordinateTools.h"
 // #include "./HEADER_FILES/myFunctions.h"
@@ -59,16 +60,16 @@ void initializeChain() {
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1003.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
 
-    // Limited Server chain
-    for (Int_t i = 0; i < 10; i++) {   
-        std::string str = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_";
-        str.append(std::to_string((i+1)));
-        str.append(".root");
-        chain.Add(str.c_str());
-    }
+    // // Limited Server chain
+    // for (Int_t i = 0; i < 10; i++) {   
+    //     std::string str = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_";
+    //     str.append(std::to_string((i+1)));
+    //     str.append(".root");
+    //     chain.Add(str.c_str());
+    // }
 
-    // //Server chain
-    // chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
+    //Server chain
+    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
 
     TObjArray *fileList = chain.GetListOfFiles();
 
@@ -87,7 +88,7 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
                                std::vector<std::vector<std::vector<Float_t>>> jetEtaVals_AllEvents,
                                std::vector<std::vector<std::vector<Float_t>>> jetPhiVals_AllEvents) {
 
-    std::cout << "Calculating Signal Distribution ... " << std::endl;
+    std::cout << "------------------ Calculating Signal Distribution ... ------------------" << std::endl;
     
     std::string signalTitle = "Normalized Signal Distribution for " + title;
 
@@ -183,6 +184,8 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
 
     hSignal.SetStats(0);
 
+    std::cout << "Done!" << std::endl;
+
     return hSignal;
 }
 
@@ -191,7 +194,7 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
                                std::vector<std::vector<std::vector<Float_t>>> jetEtaVals_AllEvents,
                                std::vector<std::vector<std::vector<Float_t>>> jetPhiVals_AllEvents) {
 
-    std::cout << "Calculating Eta Phi Distribution ... " << std::endl;
+    std::cout << "------------------Calculating Eta Phi Distribution ... ------------------" << std::endl;
 
     // First intialize the eta-phi distribution for all particles
     TH2F etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 50, 0, 7, 50, -TMath::Pi(), TMath::Pi());
@@ -233,7 +236,9 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
     etaPhiDist.SetTitleFont(132, "X");
     etaPhiDist.SetTitleFont(132, "Y");
     etaPhiDist.SetTitleFont(132, "Z");
-    
+
+    std::cout << "Done!" << std::endl;
+
     return etaPhiDist;
 }
 
@@ -241,7 +246,7 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
 // Function that returns the distribution of the simple mixed-event background function
 TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t numMixFactor, TH2F hSignal, TH2F etaPhiDist) {
 
-    std::cout << "Calculating Bsckground Distribution ... " << std::endl;
+    std::cout << "------------------ Calculating Background Distribution ... ------------------" << std::endl;
 
     std::string backgroundTitle = "Background Distribution for " + title;
 
@@ -251,11 +256,11 @@ TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t 
     // ***** PSEUDOPARTICLE MIXING *****
     // Calculating the number of pseudoparticles samples:
     // Note: numPseudo needs to first be a double to avoid limits with the int datatype
-    std::cout << "Values of entries directly from the histogram: " << hSignal.GetEntries();
+    std::cout << "Values of entries directly from the histogram: " << hSignal.GetEntries() << std::endl;
     double numSigEntries = hSignal.GetEntries();
     double numPseudo = (1 + floor(sqrt(1+(4*2*numMixFactor*(double)numSigEntries))))/2;; // Not sure why floor is added after the sqrt (used in Austin's code)
     
-    numSigEntries = (int)numSigEntries;
+    //numSigEntries = (int)numSigEntries;
     numPseudo = (int)numPseudo; // Casting back into int
 
     std::cout << "Number of entries in signal distribution: " << numSigEntries << std::endl;
@@ -302,7 +307,9 @@ TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t 
     hBackground.SetLabelFont(132, "T");
     hBackground.SetLabelFont(132, "XYZ");
 
-    hBackground.SetStats(0);
+    //hBackground.SetStats(0);
+
+    std::cout << "Done!" << std::endl;
 
     return hBackground; 
 } 
@@ -457,7 +464,7 @@ int newTwoParticleCorrJetFrame() {
     //     }
     // }
 
-    TFile *fout = new TFile("testServer_CompiledFiles_Limited.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("testServer_CompiledFiles_Inclusive.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
