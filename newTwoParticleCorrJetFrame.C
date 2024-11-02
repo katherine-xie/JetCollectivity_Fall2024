@@ -62,16 +62,16 @@ void initializeChain() {
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1003.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
 
-    // Limited Server chain
-    for (Int_t i = 0; i < 4; i++) {   
-        std::string str = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_";
-        str.append(std::to_string((i+1)));
-        str.append(".root");
-        chain.Add(str.c_str());
-    }
+    // // Limited Server chain
+    // for (Int_t i = 0; i < 4; i++) {   
+    //     std::string str = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_";
+    //     str.append(std::to_string((i+1)));
+    //     str.append(".root");
+    //     chain.Add(str.c_str());
+    // }
 
     //Server chain
-    //chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
+    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
 
     TObjArray *fileList = chain.GetListOfFiles();
 
@@ -115,6 +115,8 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
         // Check to see if the event is in the multiplicity bin
         Int_t eventIndex = reader.GetCurrentEntry();
         if (multiplicityVector[eventIndex] == 0) {continue;}
+        if (multiplicityVector[eventIndex] < 186 || multiplicityVector[eventIndex] > 227) {continue;}
+
         numSelectedEvents++;
 
         std::cout << "************** Event " << eventIndex << ", Num jets:  " << jPt->size() << " **************" << std::endl;
@@ -166,7 +168,7 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
     std::cout << "Number of selected jets: " << jetCounter << std::endl;
 
     // ***** NORMALIZATION ******
-    hSignal.Scale(1.0/(reader.GetEntries()));
+    //hSignal.Scale(1.0/(reader.GetEntries()));
     hSignal.Scale(1.0/numTrigg); 
 
     // ***** HISTOGRAM CUSTOMIZATION ******
@@ -215,6 +217,8 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
         // Check to see if the event is in the multiplicity bin
         Int_t currEventIndex = reader.GetCurrentEntry();
         if (multiplicityVector[currEventIndex] == 0) {continue;}
+        if (multiplicityVector[eventIndex] < 186 || multiplicityVector[eventIndex] > 227) {continue;}
+
 
         // Jet Loop
         for (Int_t i = 0; i < jetEtaVals_AllEvents[currEventIndex].size(); i++) {
@@ -466,7 +470,7 @@ int newTwoParticleCorrJetFrame() {
     //     }
     // }
 
-    TFile *fout = new TFile("testServer_CompiledFiles_FourFiles.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("testServer_AllFiles_HighestMultBin.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
@@ -531,15 +535,6 @@ int newTwoParticleCorrJetFrame() {
 
     cCorrected->Write(); 
 
-    // Copying the corrected histogram and truncating the z axis (for a better view)
-    TCanvas *cTruncated = new TCanvas("cTruncated", "Canvas for the Truncated Corrected Distribution", 1000, 1000);
-    cTruncated->cd();
-
-    TH2F truncatedHist = correctedHist;
-    truncatedHist.SetMaximum(0.13);
-    truncatedHist.Draw("SURF1");
-    cTruncated->Write();
-
     // // Creating canvas for the projected delta phi histgram
     // TCanvas *cProjection = new TCanvas("cProjection", "Canvas for the Projected Distributions", 800, 600);
 
@@ -583,7 +578,6 @@ int newTwoParticleCorrJetFrame() {
     delete cEtaPhi;
     delete cBackground;
     delete cCorrected;
-    // delete cTruncated;
     // delete cProjection;  
 
     fout->Close();
