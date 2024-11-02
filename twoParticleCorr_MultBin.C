@@ -37,7 +37,7 @@ R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
-std::string title = "pp (186 #leq N_{ch} #leq 227, 13 TeV, N_{ch})";
+std::string title = "pp (60 #leq N_{ch} #leq 101, 13 TeV, N_{ch})";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
@@ -194,7 +194,7 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
     std::cout << "------------------Calculating Eta Phi Distribution ... ------------------" << std::endl;
 
     // First intialize the eta-phi distribution for all particles
-    TH2F etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 25, 0, 7, 25, -TMath::Pi(), TMath::Pi());
+    TH2F etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 50, 0, 7, 50, -TMath::Pi(), TMath::Pi());
     
     // // Setup branches for particles
     // TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(reader, "genDau_pt");
@@ -359,7 +359,7 @@ int twoParticleCorr_MultBin() {
         
         //Selecting events
         if (multVec[currEventIndex] == 0) {continue;}
-        if (multVec[currEventIndex] < 186 || multVec[currEventIndex] > 227) {continue;}
+        if (multVec[currEventIndex] < 60 || multVec[currEventIndex] > 101) {continue;}
 
         std::cout << "Selected Event " << reader.GetCurrentEntry() << ": " << multVec[currEventIndex] << std::endl; 
 
@@ -460,7 +460,7 @@ int twoParticleCorr_MultBin() {
     //     }
     // }
 
-    TFile *fout = new TFile("testServer_AllFiles_FourthBin.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("Server_AllFiles_FirstBin.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
@@ -525,32 +525,32 @@ int twoParticleCorr_MultBin() {
 
     cCorrected->Write(); 
 
-    // // Creating canvas for the projected delta phi histgram
-    // TCanvas *cProjection = new TCanvas("cProjection", "Canvas for the Projected Distributions", 800, 600);
+    // Creating canvas for the projected delta phi histgram
+    TCanvas *cProjection = new TCanvas("cProjection", "Canvas for the Projected Distributions", 800, 600);
 
-    // cProjection->cd();
+    cProjection->cd();
     
-    // TH2F* correctedCopy = (TH2F*)correctedHist.Clone();
-    // correctedCopy->SetAxisRange(0, 2, "X");
+    TH2F* correctedCopy = (TH2F*)correctedHist.Clone();
+    correctedCopy->SetAxisRange(0, 2, "X");
 
-    // TH1D* projectedHist = correctedCopy->ProjectionY("projectedHist", 1, -1);
+    TH1D* projectedHist = correctedCopy->ProjectionY("projectedHist", 1, -1);
 
-    // projectedHist->SetLineWidth(2);
-    // projectedHist->SetLineColor(kBlue);
-    // projectedHist->Draw("HIST");
-    // projectedHist->GetXaxis()->SetTitleOffset(0.5);
-    // projectedHist->GetXaxis()->SetTitleFont(132);
+    projectedHist->SetLineWidth(2);
+    projectedHist->SetLineColor(kBlue);
+    projectedHist->Draw("HIST");
+    projectedHist->GetXaxis()->SetTitleOffset(0.5);
+    projectedHist->GetXaxis()->SetTitleFont(132);
 
-    // std::string projectionTitle = "Projection of Corrected Distribution for " + title;
-    // projectedHist->SetTitle(projectionTitle.c_str());
+    std::string projectionTitle = "Projection of Corrected Distribution for " + title;
+    projectedHist->SetTitle(projectionTitle.c_str());
 
-    // gPad->SetGrid();
+    gPad->SetGrid();
     
-    // gPad->SetGrid();
-    // TH1D *projectedSignalHist = simpleSignalHist.ProjectionY("projectedSignalHist", 1, -1);
-    // projectedSignalHist->SetLineWidth(2);
-    // projectedSignalHist->SetLineColor(kBlue);
-    // projectedSignalHist->Draw("HIST L");
+    gPad->SetGrid();
+    TH1D *projectedSignalHist = simpleSignalHist.ProjectionY("projectedSignalHist", 1, -1);
+    projectedSignalHist->SetLineWidth(2);
+    projectedSignalHist->SetLineColor(kBlue);
+    projectedSignalHist->Draw("HIST L");
 
     // cProjection->cd(2);
     // gPad->SetGrid();
@@ -568,7 +568,7 @@ int twoParticleCorr_MultBin() {
     delete cEtaPhi;
     delete cBackground;
     delete cCorrected;
-    // delete cProjection;  
+    delete cProjection;  
 
     fout->Close();
     t.Print();
