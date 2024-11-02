@@ -60,16 +60,16 @@ void initializeChain() {
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1003.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
 
-    // // Limited Server chain
-    // for (Int_t i = 0; i < 10; i++) {   
-    //     std::string str = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_";
-    //     str.append(std::to_string((i+1)));
-    //     str.append(".root");
-    //     chain.Add(str.c_str());
-    // }
+    // Limited Server chain
+    for (Int_t i = 0; i < 1; i++) {   
+        std::string str = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_";
+        str.append(std::to_string((i+1)));
+        str.append(".root");
+        chain.Add(str.c_str());
+    }
 
     //Server chain
-    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
+    //chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
 
     TObjArray *fileList = chain.GetListOfFiles();
 
@@ -464,7 +464,7 @@ int newTwoParticleCorrJetFrame() {
     //     }
     // }
 
-    TFile *fout = new TFile("testServer_CompiledFiles_Inclusive.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("testServer_CompiledFiles_OneFile.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
