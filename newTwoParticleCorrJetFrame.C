@@ -217,7 +217,7 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
         // Check to see if the event is in the multiplicity bin
         Int_t currEventIndex = reader.GetCurrentEntry();
         if (multiplicityVector[currEventIndex] == 0) {continue;}
-        if (multiplicityVector[eventIndex] < 186 || multiplicityVector[eventIndex] > 227) {continue;}
+        if (multiplicityVector[currEventIndex] < 186 || multiplicityVector[currEventIndex] > 227) {continue;}
 
 
         // Jet Loop
