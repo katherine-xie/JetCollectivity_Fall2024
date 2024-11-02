@@ -20,6 +20,8 @@
 #include <string>
 #include <vector>
 
+TStopwatch t;
+
 // Run locally
 // #include "./SHARED_LIB_LOCAL/coordinateTools_SharedLib.h"
 // #include "./SHARED_LIB_LOCAL/myFunctions_SharedLib.h"
@@ -585,5 +587,6 @@ int newTwoParticleCorrJetFrame() {
     // delete cProjection;  
 
     fout->Close();
+    t.Print();
     return 0;
 }
