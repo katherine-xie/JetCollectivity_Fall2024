@@ -37,7 +37,7 @@ R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
-std::string title = "pp (N_ch >= 60, 13 TeV)";
+std::string title = "pp (186 #geq N_{ch} #leq 227, 13 TeV, N_{ch})";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
@@ -194,7 +194,7 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
     std::cout << "------------------Calculating Eta Phi Distribution ... ------------------" << std::endl;
 
     // First intialize the eta-phi distribution for all particles
-    TH2F etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 50, 0, 7, 50, -TMath::Pi(), TMath::Pi());
+    TH2F etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 25, 0, 7, 25, -TMath::Pi(), TMath::Pi());
     
     // // Setup branches for particles
     // TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(reader, "genDau_pt");
