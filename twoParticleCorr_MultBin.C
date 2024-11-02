@@ -37,7 +37,7 @@ R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
-std::string title = "pp (186 #geq N_{ch} #leq 227, 13 TeV, N_{ch})";
+std::string title = "pp (186 #leq N_{ch} #leq 227, 13 TeV, N_{ch})";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
