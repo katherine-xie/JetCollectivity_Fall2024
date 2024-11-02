@@ -115,7 +115,7 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
         // Check to see if the event is in the multiplicity bin
         Int_t eventIndex = reader.GetCurrentEntry();
         if (multiplicityVector[eventIndex] == 0) {continue;}
-        if (multiplicityVector[eventIndex] < 186 || multiplicityVector[eventIndex] > 227) {continue;}
+        if (multiplicityVector[eventIndex] < 144 || multiplicityVector[eventIndex] > 185) {continue;}
 
         numSelectedEvents++;
 
@@ -217,7 +217,7 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
         // Check to see if the event is in the multiplicity bin
         Int_t currEventIndex = reader.GetCurrentEntry();
         if (multiplicityVector[currEventIndex] == 0) {continue;}
-        if (multiplicityVector[currEventIndex] < 186 || multiplicityVector[currEventIndex] > 227) {continue;}
+        if (multiplicityVector[currEventIndex] < 144 || multiplicityVector[currEventIndex] > 185) {continue;}
 
 
         // Jet Loop
@@ -470,7 +470,7 @@ int newTwoParticleCorrJetFrame() {
     //     }
     // }
 
-    TFile *fout = new TFile("testServer_AllFiles_HighestMultBin.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("testServer_AllFiles_ThirdMultBin.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
