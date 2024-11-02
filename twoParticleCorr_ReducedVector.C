@@ -310,12 +310,6 @@ int twoParticleCorr_ReducedVector() {
 
     initializeChain();
 
-    // TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(reader, "genDau_pt");
-    // TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(reader, "genDau_phi");
-    // TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(reader, "genDau_eta");
-    // TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(reader, "genDau_chg");
-    // TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(reader, "genDau_pid");   
-
     std::vector<Int_t> multVec; // Stores multiplicity values; vector has same size as num. events
 
     // The following vectors have dimensions of event{jet{particles}}
@@ -365,7 +359,7 @@ int twoParticleCorr_ReducedVector() {
         
         //Selecting events
         if (multVec[currEventIndex] == 0) {continue;}
-        if (multVec[currEventIndex] < 144 || multVec[currEventIndex] > 185) {continue;}
+        //if (multVec[currEventIndex] < 144 || multVec[currEventIndex] > 185) {continue;}
 
         std::cout << "Selected Event " << reader.GetCurrentEntry() << ": " << multVec[currEventIndex] << std::endl; 
 
@@ -466,7 +460,7 @@ int twoParticleCorr_ReducedVector() {
     //     }
     // }
 
-    TFile *fout = new TFile("testServerReducedVector.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("testServer_AllFiles.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
