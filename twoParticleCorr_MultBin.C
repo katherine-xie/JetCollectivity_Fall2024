@@ -37,7 +37,7 @@ R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
-std::string title = "pp (N_{ch}^{j} #geq 100, 13 TeV)";
+std::string title = "pp (N_{ch}^{event} #geq 94, 13 TeV)";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
@@ -362,6 +362,7 @@ int twoParticleCorr_MultBin() {
         //Selecting events
         if (multVec[currEventIndex] == 0) {continue;}
         //if (multVec[currEventIndex] < 186 || multVec[currEventIndex] > 227) {continue;}
+        if (multVec[currEventIndex] < 94) {continue;}
 
         //std::cout << "Selected Event " << reader.GetCurrentEntry() << ": " << multVec[currEventIndex] << std::endl; 
 
@@ -384,7 +385,8 @@ int twoParticleCorr_MultBin() {
             if (std::isnan((*jEta)[i])) {continue;}
 
             // Applying jet selection criteria
-            if ((*jMult)[i] < 100) {continue;}
+            //if ((*jMult)[i] < 100) {continue;}
+
             if ((*jPt)[i] <= 550) {continue;}
             if (fabs((*jEta)[i]) >= 1.6) {continue;}
 
@@ -463,7 +465,7 @@ int twoParticleCorr_MultBin() {
     //     }
     // }
 
-    TFile *fout = new TFile("Server_AllFiles_HighJetMult.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("Server_AllFiles_HighEventMult.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
