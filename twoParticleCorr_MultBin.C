@@ -37,7 +37,7 @@ R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
-std::string title = "pp (60 #leq N_{ch} #leq 101, 13 TeV, N_{ch})";
+std::string title = "pp (144 #leq N_{ch} #leq 185, 13 TeV, N_{ch})";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
@@ -359,7 +359,7 @@ int twoParticleCorr_MultBin() {
         
         //Selecting events
         if (multVec[currEventIndex] == 0) {continue;}
-        if (multVec[currEventIndex] < 60 || multVec[currEventIndex] > 101) {continue;}
+        if (multVec[currEventIndex] < 144 || multVec[currEventIndex] > 185) {continue;}
 
         std::cout << "Selected Event " << reader.GetCurrentEntry() << ": " << multVec[currEventIndex] << std::endl; 
 
@@ -460,7 +460,7 @@ int twoParticleCorr_MultBin() {
     //     }
     // }
 
-    TFile *fout = new TFile("Server_AllFiles_FirstBin.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("Server_AllFiles_ThirdBin.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
