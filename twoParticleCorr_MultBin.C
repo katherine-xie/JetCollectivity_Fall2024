@@ -191,10 +191,10 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
                                std::vector<std::vector<std::vector<Float_t>>> jetEtaVals_AllEvents,
                                std::vector<std::vector<std::vector<Float_t>>> jetPhiVals_AllEvents) {
 
-    std::cout << "------------------Calculating Eta Phi Distribution ... ------------------" << std::endl;
+    std::cout << "------------------ Calculating Eta Phi Distribution ... ------------------" << std::endl;
 
     // First intialize the eta-phi distribution for all particles
-    TH2F etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 50, 0, 7, 50, -TMath::Pi(), TMath::Pi());
+    TH2F etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 30, 0, 7, 30, -TMath::Pi(), TMath::Pi());
     
     // // Setup branches for particles
     // TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(reader, "genDau_pt");
@@ -307,6 +307,8 @@ TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t 
 
 
 int twoParticleCorr_MultBin() {
+
+    std::cout << "------------------ Now calculating " << title << " ------------------" << std::endl;
 
     initializeChain();
 
@@ -550,7 +552,7 @@ int twoParticleCorr_MultBin() {
     TH1D *projectedSignalHist = simpleSignalHist.ProjectionY("projectedSignalHist", 1, -1);
     projectedSignalHist->SetLineWidth(2);
     projectedSignalHist->SetLineColor(kBlue);
-    projectedSignalHist->Draw("HIST L");
+    projectedSignalHist->Draw("HIST");
 
     // cProjection->cd(2);
     // gPad->SetGrid();
