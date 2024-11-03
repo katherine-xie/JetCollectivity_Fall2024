@@ -37,7 +37,7 @@ R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
-std::string title = "pp (186 #leq N_{ch} #leq 227, 13 TeV, N_{ch})";
+std::string title = "pp (N_{ch}^{j} #geq 100, 13 TeV)";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
@@ -51,7 +51,7 @@ TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(reader, "genDau_pid");
 TTreeReaderValue<std::vector<Float_t>> jPt(reader, "genJetPt");
 TTreeReaderValue<std::vector<Float_t>> jEta(reader, "genJetEta");
 TTreeReaderValue<std::vector<Float_t>> jPhi(reader, "genJetPhi");
-
+TTreeReaderValue<std::vector<Int_t>> jMult(reader, "genJetChargedMultiplicity");
 
 void initializeChain() {
 
@@ -194,7 +194,7 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
     std::cout << "------------------ Calculating Eta Phi Distribution ... ------------------" << std::endl;
 
     // First intialize the eta-phi distribution for all particles
-    TH2F etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 30, 0, 7, 30, -TMath::Pi(), TMath::Pi());
+    TH2F etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 50, 0, 7, 50, -TMath::Pi(), TMath::Pi());
     
     // // Setup branches for particles
     // TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(reader, "genDau_pt");
@@ -361,9 +361,9 @@ int twoParticleCorr_MultBin() {
         
         //Selecting events
         if (multVec[currEventIndex] == 0) {continue;}
-        if (multVec[currEventIndex] < 186 || multVec[currEventIndex] > 227) {continue;}
+        //if (multVec[currEventIndex] < 186 || multVec[currEventIndex] > 227) {continue;}
 
-        std::cout << "Selected Event " << reader.GetCurrentEntry() << ": " << multVec[currEventIndex] << std::endl; 
+        //std::cout << "Selected Event " << reader.GetCurrentEntry() << ": " << multVec[currEventIndex] << std::endl; 
 
     
         // ***** Calculating the coordinates in the jet frame *****
@@ -384,6 +384,7 @@ int twoParticleCorr_MultBin() {
             if (std::isnan((*jEta)[i])) {continue;}
 
             // Applying jet selection criteria
+            if ((*jMult)[i] < 100) {continue;}
             if ((*jPt)[i] <= 550) {continue;}
             if (fabs((*jEta)[i]) >= 1.6) {continue;}
 
@@ -462,7 +463,7 @@ int twoParticleCorr_MultBin() {
     //     }
     // }
 
-    TFile *fout = new TFile("Server_AllFiles_FourthBin.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("Server_AllFiles_HighJetMult.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
