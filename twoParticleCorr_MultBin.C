@@ -37,7 +37,7 @@ R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
-std::string title = "pp (N_{ch}^{jet} #geq 100, 13 TeV)";
+std::string title = "pp, 13 TeV)";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
@@ -361,7 +361,7 @@ int twoParticleCorr_MultBin() {
         
         //Selecting events
         if (multVec[currEventIndex] == 0) {continue;}
-        //if (multVec[currEventIndex] < 186 || multVec[currEventIndex] > 227) {continue;}
+        if (multVec[currEventIndex] < 186 || multVec[currEventIndex] > 227) {continue;}
         //if (multVec[currEventIndex] < 94) {continue;}
 
         //std::cout << "Selected Event " << reader.GetCurrentEntry() << ": " << multVec[currEventIndex] << std::endl; 
@@ -369,7 +369,7 @@ int twoParticleCorr_MultBin() {
     
         // ***** Calculating the coordinates in the jet frame *****
         std::vector<std::vector<Float_t>> jetEtaVals_SingleEvent;
-        std::vector<std::vector<Float_t>> jetPhitVals_SingleEvent;
+        std::vector<std::vector<Float_t>> jetPhiVals_SingleEvent;
 
         // Jet Loop
         for (Int_t i = 0; i < pPt->size(); i++) {
@@ -385,7 +385,7 @@ int twoParticleCorr_MultBin() {
             if (std::isnan((*jEta)[i])) {continue;}
 
             // Applying jet selection criteria
-            if ((*jMult)[i] < 100) {continue;}
+            //if ((*jMult)[i] < 100) {continue;}
 
             if ((*jPt)[i] <= 550) {continue;}
             if (fabs((*jEta)[i]) >= 1.6) {continue;}
@@ -465,7 +465,7 @@ int twoParticleCorr_MultBin() {
     //     }
     // }
 
-    TFile *fout = new TFile("Server_AllFiles_HighEventMult.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("newestTest.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
