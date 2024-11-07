@@ -37,7 +37,7 @@ R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
-std::string title = "pp (N_{ch}^{event} #geq 94, 13 TeV)";
+std::string title = "pp (N_{ch}^{jet} #geq 100, 13 TeV)";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
@@ -362,14 +362,14 @@ int twoParticleCorr_MultBin() {
         //Selecting events
         if (multVec[currEventIndex] == 0) {continue;}
         //if (multVec[currEventIndex] < 186 || multVec[currEventIndex] > 227) {continue;}
-        if (multVec[currEventIndex] < 94) {continue;}
+        //if (multVec[currEventIndex] < 94) {continue;}
 
         //std::cout << "Selected Event " << reader.GetCurrentEntry() << ": " << multVec[currEventIndex] << std::endl; 
 
     
         // ***** Calculating the coordinates in the jet frame *****
         std::vector<std::vector<Float_t>> jetEtaVals_SingleEvent;
-        std::vector<std::vector<Float_t>> jetPhiVals_SingleEvent;
+        std::vector<std::vector<Float_t>> jetPhitVals_SingleEvent;
 
         // Jet Loop
         for (Int_t i = 0; i < pPt->size(); i++) {
@@ -385,7 +385,7 @@ int twoParticleCorr_MultBin() {
             if (std::isnan((*jEta)[i])) {continue;}
 
             // Applying jet selection criteria
-            //if ((*jMult)[i] < 100) {continue;}
+            if ((*jMult)[i] < 100) {continue;}
 
             if ((*jPt)[i] <= 550) {continue;}
             if (fabs((*jEta)[i]) >= 1.6) {continue;}
@@ -472,25 +472,26 @@ int twoParticleCorr_MultBin() {
 
     TH2F simpleSignalHist = createSignalDist_JetFrame(multVec, jetEtaVals_AllEvents, jetPhiVals_AllEvents);
 
-    cSignal->cd();
-    simpleSignalHist.Draw("SURF1");
-    cSignal->Write();
+    simpleSignalHist.Write();
+    // // cSignal->cd();
+    // // simpleSignalHist.Draw("SURF1");
+    // cSignal->Write();
 
     // Testing eta/phi distribution
     TCanvas *cEtaPhi = new TCanvas("cEtaPhi", "Canvas for the Eta-Phi Distribution", 800, 600);
     TH2F etaPhiHist = createEtaPhiDist_JetFrame(multVec, jetEtaVals_AllEvents, jetPhiVals_AllEvents);
-    
-    cEtaPhi->cd();
-    etaPhiHist.Draw("SURF1");
-    cEtaPhi->Write();
+    etaPhiHist.Write();
+    // cEtaPhi->cd();
+    // etaPhiHist.Draw("SURF1");
+    // cEtaPhi->Write();
 
     // Creating canvas for the background histogram
     TCanvas *cBackground = new TCanvas("cBackground", "Canvas for the Background Distribution", 800, 600);
     TH2F simpleBackgroundHist = createBackgroundDist_JetFrame(multVec, 10, simpleSignalHist, etaPhiHist);
-
-    cBackground->cd();
-    simpleBackgroundHist.Draw("SURF1");
-    cBackground->Write();
+    simpleBackgroundHist.Write();
+    // cBackground->cd();
+    // simpleBackgroundHist.Draw("SURF1");
+    // cBackground->Write();
 
     // Creating canvas for the corrected signal distribution
     TCanvas *cCorrected = new TCanvas("cCorrected", "Canvas for the Corrected Signal Distribution", 1000, 1000);
@@ -500,62 +501,63 @@ int twoParticleCorr_MultBin() {
     std::cout << "B(0,0): " << simpleBackgroundHist.GetBinContent(simpleBackgroundHist.FindBin(0,0)) << std::endl;
     correctedHist.Scale(simpleBackgroundHist.GetBinContent(simpleBackgroundHist.FindBin(0,0)));
 
-    cCorrected->cd();
-    cCorrected->SetFillColor(0);
-    correctedHist.Draw("SURF1");
+    correctedHist.Write();
+    // cCorrected->cd();
+    // cCorrected->SetFillColor(0);
+    // correctedHist.Draw("SURF1");
 
-    // ***** HISTOGRAM CUSTOMIZATION ***** //
-    std::string correctedTitle = "Corrected Signal Distribution for " + title;
-    correctedHist.SetTitle(correctedTitle.c_str());
-    //correctedHist.SetTitle("");
+    // // ***** HISTOGRAM CUSTOMIZATION ***** //
+    // std::string correctedTitle = "Corrected Signal Distribution for " + title;
+    // correctedHist.SetTitle(correctedTitle.c_str());
+    // //correctedHist.SetTitle("");
 
-    correctedHist.GetZaxis()->SetTitle("C(#Delta#eta*, #Delta#phi*)");
-    correctedHist.GetZaxis()->SetTitleSize(0.04);
-    //correctedHist.GetZaxis()->SetTitleOffset(0.01);
+    // correctedHist.GetZaxis()->SetTitle("C(#Delta#eta*, #Delta#phi*)");
+    // //correctedHist.GetZaxis()->SetTitleSize(0.04);
+    // //correctedHist.GetZaxis()->SetTitleOffset(0.01);
 
-    correctedHist.GetXaxis()->SetTitleOffset(1);
-    correctedHist.GetXaxis()->SetTitleSize(0.05);
+    // correctedHist.GetXaxis()->SetTitleOffset(1);
+    // correctedHist.GetXaxis()->SetTitleSize(0.05);
 
-    correctedHist.GetYaxis()->SetTitleOffset(1);
-    correctedHist.GetYaxis()->SetTitleSize(0.05);
+    // correctedHist.GetYaxis()->SetTitleOffset(1);
+    // correctedHist.GetYaxis()->SetTitleSize(0.05);
 
-    correctedHist.SetTitleOffset(1.1, "Z");
-    correctedHist.SetTitleFont(132, "T");
-    correctedHist.SetTitleFont(132, "XYZ");
-    correctedHist.SetLabelFont(132, "T");
-    correctedHist.SetLabelFont(132, "XYZ");
+    // correctedHist.SetTitleOffset(1.1, "Z");
+    // correctedHist.SetTitleFont(132, "T");
+    // correctedHist.SetTitleFont(132, "XYZ");
+    // correctedHist.SetLabelFont(132, "T");
+    // correctedHist.SetLabelFont(132, "XYZ");
 
-    correctedHist.SetAxisRange(-2, 2, "X");
-    correctedHist.SetAxisRange(-2, 5, "Y");
+    // correctedHist.SetAxisRange(-2, 2, "X");
+    // correctedHist.SetAxisRange(-2, 5, "Y");
 
-    cCorrected->Write(); 
+    // cCorrected->Write(); 
 
-    // Creating canvas for the projected delta phi histgram
-    TCanvas *cProjection = new TCanvas("cProjection", "Canvas for the Projected Distributions", 800, 600);
+    // // Creating canvas for the projected delta phi histgram
+    // TCanvas *cProjection = new TCanvas("cProjection", "Canvas for the Projected Distributions", 800, 600);
 
-    cProjection->cd();
+    // cProjection->cd();
     
-    TH2F* correctedCopy = (TH2F*)correctedHist.Clone();
-    correctedCopy->SetAxisRange(0, 2, "X");
+    // TH2F* correctedCopy = (TH2F*)correctedHist.Clone();
+    // correctedCopy->SetAxisRange(0, 2, "X");
 
-    TH1D* projectedHist = correctedCopy->ProjectionY("projectedHist", 1, -1);
+    // TH1D* projectedHist = correctedCopy->ProjectionY("projectedHist", 1, -1);
 
-    projectedHist->SetLineWidth(2);
-    projectedHist->SetLineColor(kBlue);
-    projectedHist->Draw("HIST");
-    projectedHist->GetXaxis()->SetTitleOffset(0.5);
-    projectedHist->GetXaxis()->SetTitleFont(132);
+    // projectedHist->SetLineWidth(2);
+    // projectedHist->SetLineColor(kBlue);
+    // projectedHist->Draw("HIST");
+    // projectedHist->GetXaxis()->SetTitleOffset(0.5);
+    // projectedHist->GetXaxis()->SetTitleFont(132);
 
-    std::string projectionTitle = "Projection of Corrected Distribution for " + title;
-    projectedHist->SetTitle(projectionTitle.c_str());
+    // std::string projectionTitle = "Projection of Corrected Distribution for " + title;
+    // projectedHist->SetTitle(projectionTitle.c_str());
 
-    gPad->SetGrid();
+    // gPad->SetGrid();
     
-    gPad->SetGrid();
-    TH1D *projectedSignalHist = simpleSignalHist.ProjectionY("projectedSignalHist", 1, -1);
-    projectedSignalHist->SetLineWidth(2);
-    projectedSignalHist->SetLineColor(kBlue);
-    projectedSignalHist->Draw("HIST");
+    // gPad->SetGrid();
+    // TH1D *projectedSignalHist = simpleSignalHist.ProjectionY("projectedSignalHist", 1, -1);
+    // projectedSignalHist->SetLineWidth(2);
+    // projectedSignalHist->SetLineColor(kBlue);
+    // projectedSignalHist->Draw("HIST");
 
     // cProjection->cd(2);
     // gPad->SetGrid();
@@ -566,13 +568,13 @@ int twoParticleCorr_MultBin() {
     // projectedBackgroundHist->SetLineColor(kBlue);
     // projectedBackgroundHist->Draw("HIST L SAME"); 
 
-    cProjection->Write(); 
+    // cProjection->Write(); 
 
-    delete cSignal;
-    delete cEtaPhi;
-    delete cBackground;
-    delete cCorrected;
-    delete cProjection;  
+    // delete cSignal;
+    // delete cEtaPhi;
+    // delete cBackground;
+    // delete cCorrected;
+    // delete cProjection;  
 
     fout->Close();
     t.Print();
