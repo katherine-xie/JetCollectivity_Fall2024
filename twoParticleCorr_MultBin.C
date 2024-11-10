@@ -22,18 +22,18 @@
 
 TStopwatch t;
 
-//Run locally
-#include "./SHARED_LIB_LOCAL/coordinateTools_SharedLib.h"
-#include "./SHARED_LIB_LOCAL/myFunctions_SharedLib.h"
-R__LOAD_LIBRARY(./SHARED_LIB_LOCAL/myFunctions_SharedLib_C.so);
+// //Run locally
+// #include "./SHARED_LIB_LOCAL/coordinateTools_SharedLib.h"
+// #include "./SHARED_LIB_LOCAL/myFunctions_SharedLib.h"
+// R__LOAD_LIBRARY(./SHARED_LIB_LOCAL/myFunctions_SharedLib_C.so);
 
 // #include "./HEADER_FILES/coordinateTools.h"
 // #include "./HEADER_FILES/myFunctions.h"
 
-// // Run on server:
-// #include "./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS.h"
-// #include "./SHARED_LIB_SERVER/JETFRAME_FUNCTIONS.h"
-// R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
+// Run on server:
+#include "./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS.h"
+#include "./SHARED_LIB_SERVER/JETFRAME_FUNCTIONS.h"
+R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
