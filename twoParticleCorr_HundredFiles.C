@@ -306,7 +306,7 @@ TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t 
 } 
 
 
-int twoParticleCorr_MultBin() {
+int twoParticleCorr_HundredFiles() {
 
     std::cout << "------------------ Now calculating " << title << " ------------------" << std::endl;
 
