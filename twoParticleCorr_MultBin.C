@@ -63,7 +63,7 @@ void initializeChain() {
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
 
     // Limited Server chain
-    for (Int_t i = 0; i < 50; i++) {   
+    for (Int_t i = 0; i < 30; i++) {   
         std::string str = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_";
         str.append(std::to_string((i+1)));
         str.append(".root");
@@ -464,7 +464,7 @@ int twoParticleCorr_MultBin() {
     //     }
     // }
 
-    TFile *fout = new TFile("ReducedBackground_50Files.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("ReducedBackground_30Files.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     //TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
