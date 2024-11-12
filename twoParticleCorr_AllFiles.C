@@ -37,7 +37,7 @@ R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
-std::string title = "pp (N_{ch} #geq 60, 13 TeV)";
+std::string title = "pp (N_{ch} #geq 60, 13 TeV), 100 Files";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
@@ -62,16 +62,16 @@ void initializeChain() {
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1003.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
 
-    // Limited Server chain
-    for (Int_t i = 0; i < 20; i++) {   
-        std::string str = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_";
-        str.append(std::to_string((i+1)));
-        str.append(".root");
-        chain.Add(str.c_str());
-    }
+    // // Limited Server chain
+    // for (Int_t i = 0; i < 100; i++) {   
+    //     std::string str = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_";
+    //     str.append(std::to_string((i+1)));
+    //     str.append(".root");
+    //     chain.Add(str.c_str());
+    // }
 
-    // Server chain
-    //chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
+    Server chain
+    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
 
     TObjArray *fileList = chain.GetListOfFiles();
 
@@ -306,7 +306,7 @@ TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t 
 } 
 
 
-int twoParticleCorr_MultBin() {
+int twoParticleCorr_AllFiles() {
 
     std::cout << "------------------ Now calculating " << title << " ------------------" << std::endl;
 
@@ -464,7 +464,7 @@ int twoParticleCorr_MultBin() {
     //     }
     // }
 
-    TFile *fout = new TFile("ReducedBackground_20Files.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("ReducedBackground_AllFiles_Redo.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     //TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
@@ -562,8 +562,8 @@ int twoParticleCorr_MultBin() {
     //projectedBackgroundHist->SetMaximum(50e6);
     projectedBackgroundHist->SetLineWidth(2);
     projectedBackgroundHist->SetLineColor(kBlue);
-    //projectedBackgroundHist->Draw("HIST L SAME"); 
     projectedBackgroundHist->Write();
+    //projectedBackgroundHist->Draw("HIST L SAME"); 
 
     // delete cSignal;
     // delete cEtaPhi;
