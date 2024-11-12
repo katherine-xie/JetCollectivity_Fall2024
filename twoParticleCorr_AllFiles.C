@@ -70,7 +70,7 @@ void initializeChain() {
     //     chain.Add(str.c_str());
     // }
 
-    Server chain
+    //Server chain
     chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
 
     TObjArray *fileList = chain.GetListOfFiles();
