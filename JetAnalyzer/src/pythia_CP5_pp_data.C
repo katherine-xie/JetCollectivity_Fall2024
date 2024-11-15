@@ -441,10 +441,11 @@ void MyClass::Loop(int job, std::string fList){
                 //long int NENT =  hPairsPU[wpPU-1]->GetBinContent(wtrk, wppt);
                 long int NENT =  hPairs->GetBinContent(wtrk, wppt);
                 long int XENT =  ((1+floor(sqrt(1+(4*2*backMult*NENT))))/2) ;
-                float A_ETA[XENT] = {0};
-                float A_PHI[XENT] = {0};
-                float A_ETA_Cor[XENT] = {0};
-                float A_PHI_Cor[XENT] = {0};
+                float A_ETA[XENT];
+                float A_PHI[XENT];
+                float A_ETA_Cor[XENT];
+                float A_PHI_Cor[XENT];
+                
                 for(int x = 0; x<XENT; x++){
                     gRandom->SetSeed(0);
 
