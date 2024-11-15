@@ -187,7 +187,7 @@ void MyClass::Loop(int job, std::string fList){
             Long64_t jevent = LoadTree(ievent);
             nb = fChain->GetEntry(ievent);   nbytes += nb;
 
-            if(!F_eventpass(genJetPt, genJetChargedMultiplicity[], jetPtCut_Event)){
+            if(!F_eventpass(genJetPt, jetPtCut_Event)){
                 continue;
             }
             
@@ -258,7 +258,7 @@ void MyClass::Loop(int job, std::string fList){
 
                 int Ntrig[trackbin][ptbin] = {0};
                 double NtrigCorrected[trackbin][ptbin] = {0};
-                int A_ptBool[NNtrk][ptbin] = {0};
+                int A_ptBool[NNtrk][ptbin];
 
                 // VERY IMPORTANT calculating daughter pt wrt to jet axis.
                 // So this needs to be 2d vector, for pt bin and for daughter index.
