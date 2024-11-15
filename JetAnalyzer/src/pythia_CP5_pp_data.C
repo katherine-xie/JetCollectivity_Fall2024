@@ -34,17 +34,27 @@ using TMath::Exp;
 
 //Bool folds
 
-bool F_eventpass(std::vector< float > *genJetPt, int genJetChargedMultiplicity, float jetPtCut){
+// bool F_eventpass(std::vector< float > *genJetPt, int jetnumber, float jetPtCut){
+
+//     if(genJetPt->size() < 1)           return false;
+//     if(jetnumber > 200)              return false;
+//     if((*genJetPt)[0] < jetPtCut) return false;
+//     return true;
+// }
+
+
+// removed jet number, causing issues
+bool F_eventpass(std::vector< float > *genJetPt, float jetPtCut){
 
     if(genJetPt->size() < 1)           return false;
-    if(jetnumber > 200)              return false;
     if((*genJetPt)[0] < jetPtCut) return false;
     return true;
 }
 
+
 bool F_jetpass(std::vector< float > * jetEta, std::vector< float > * jetPt, int     ijet, float   jetPtCut){
-    if(fabs( (*genJetEta)[ijet])   >jetEtaCut)   return false;
-    if((*genJetPt)[ijet]           <jetPtCut)    return false;
+    if(fabs( (*jetEta)[ijet])   >jetEtaCut)   return false;
+    if((*jetPt)[ijet]           <jetPtCut)    return false;
     return true;
 }
 
@@ -177,7 +187,7 @@ void MyClass::Loop(int job, std::string fList){
             Long64_t jevent = LoadTree(ievent);
             nb = fChain->GetEntry(ievent);   nbytes += nb;
 
-            if(!F_eventpass(genJetPt, genJetChargedMultiplicity, jetPtCut_Event)){
+            if(!F_eventpass(genJetPt, genJetChargedMultiplicity[], jetPtCut_Event)){
                 continue;
             }
             
