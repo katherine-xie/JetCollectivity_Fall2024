@@ -146,6 +146,7 @@ void MyClass::Loop(int job, std::string fList){
     TH1D* hBinDist_unc[trackbin];
 
     for(int wtrk = 1; wtrk<trackbin+1; wtrk++){
+
         hBinDist_cor[wtrk-1]    = new TH1D(Form("hBinDist_cor_%d",wtrk),Form("hBinDist_cor_%d",wtrk), bin360, bin0, bin120);
         hBinDist_unc[wtrk-1]    = new TH1D(Form("hBinDist_unc_%d",wtrk),Form("hBinDist_unc_%d",wtrk), bin360, bin0, bin120);
         
@@ -184,12 +185,16 @@ void MyClass::Loop(int job, std::string fList){
         
         // ENTERING EVENT LOOP
         for (Long64_t ievent=0; ievent <nentries; ievent ++){
+
+
             Long64_t jevent = LoadTree(ievent);
             nb = fChain->GetEntry(ievent);   nbytes += nb;
 
             if(!F_eventpass(genJetPt, jetPtCut_Event)){
                 continue;
             }
+
+            std::cout << "Event: " << ievent << std::endl;
             
             hEvent_Pass->Fill(1);
 
@@ -210,6 +215,8 @@ void MyClass::Loop(int job, std::string fList){
                 if( (*genJetPt)[ijet] < jetPtCut_Jet   ) continue;
                 hJetPt->Fill((*genJetPt)[ijet]);
 
+                std::cout << "      Jet: " << ijet << std::endl;
+                
                 // filling distributions within track bins
                 // ALSO VERY IMPORTANLTY changing the tkBool to 1 for this particular jet. This will be usefull later wen I create conditons for filling other historgams.
 
@@ -314,6 +321,7 @@ void MyClass::Loop(int job, std::string fList){
                 }
 
                 for(int  A_trk=0; A_trk < NNtrk; A_trk++ ){
+
                     //this should be redundant if it passes the bools above? i guess it helps skip daughters faster. maybe i can reindex and run through the daughters quickly by aranging all the charged dauhghter sat the front.
                     if((*genDau_chg)[ijet][A_trk] == 0) continue;
                     if((*genDau_pt)[ijet][A_trk] < 0.3) continue;
