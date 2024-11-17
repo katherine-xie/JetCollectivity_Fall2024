@@ -174,7 +174,7 @@ void MyClass::Loop(int job, std::string fList){
     for(int f = 0; f<fileList.size(); f++){
         int f_from_file = f;
         fFile = TFile::Open(fileList.at(f).c_str(),"read");
-        TTree *tree = (TTree*)fFile->Get("analyzerOffline/trackTree");
+        TTree *tree = (TTree*)fFile->Get("trackTree");
         Init(tree);
 
         std::cout << "File " << f+1 << " out of " << fileList.size() << std::endl;
@@ -216,7 +216,7 @@ void MyClass::Loop(int job, std::string fList){
                 hJetPt->Fill((*genJetPt)[ijet]);
 
                 std::cout << "      Jet: " << ijet << std::endl;
-                
+
                 // filling distributions within track bins
                 // ALSO VERY IMPORTANLTY changing the tkBool to 1 for this particular jet. This will be usefull later wen I create conditons for filling other historgams.
 
