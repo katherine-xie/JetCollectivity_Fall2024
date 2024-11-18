@@ -180,8 +180,7 @@ void MyClass::Loop(int job, std::string fList){
         std::cout << "File " << f+1 << " out of " << fileList.size() << std::endl;
         Long64_t nbytes = 0, nb = 0;
         Long64_t nentries = fChain->GetEntriesFast();
-        cout<<"Total Entries is:"<<endl;
-        cout<< nentries <<endl;
+        cout<<"Total Entries is:" << nentries <<endl;
         
         // ENTERING EVENT LOOP
         for (Long64_t ievent=0; ievent <nentries; ievent ++){
@@ -215,7 +214,7 @@ void MyClass::Loop(int job, std::string fList){
                 if( (*genJetPt)[ijet] < jetPtCut_Jet   ) continue;
                 hJetPt->Fill((*genJetPt)[ijet]);
 
-                std::cout << "      Jet: " << ijet << std::endl;
+                //std::cout << "      Jet: " << ijet << std::endl;
 
                 // filling distributions within track bins
                 // ALSO VERY IMPORTANLTY changing the tkBool to 1 for this particular jet. This will be usefull later wen I create conditons for filling other historgams.
@@ -434,7 +433,7 @@ void MyClass::Loop(int job, std::string fList){
         fFile->Close();
     }//f in filelist end 
 
-    int backMult =10;
+    int backMult = 5;
     for(int wtrk = 1; wtrk < trackbin+1; wtrk++){
         std::cout << wtrk << "/" << trackbin << std::endl;
         for(int wppt = 1; wppt < ptbin+1; wppt++){ 
