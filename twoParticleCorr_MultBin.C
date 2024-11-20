@@ -42,15 +42,15 @@ TChain chain("trackTree");
 TTreeReader reader(&chain);
 
 // Setup branches for particles
-TTreeReaderValue<std::vector<std::vector<Double_t>>> pPt(reader, "genDau_pt");
-TTreeReaderValue<std::vector<std::vector<Double_t>>> pPhi(reader, "genDau_phi");
-TTreeReaderValue<std::vector<std::vector<Double_t>>> pEta(reader, "genDau_eta");
+TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(reader, "genDau_pt");
+TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(reader, "genDau_phi");
+TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(reader, "genDau_eta");
 TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(reader, "genDau_chg");
 TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(reader, "genDau_pid");  
 
-TTreeReaderValue<std::vector<Double_t>> jPt(reader, "genJetPt");
-TTreeReaderValue<std::vector<Double_t>> jEta(reader, "genJetEta");
-TTreeReaderValue<std::vector<Double_t>> jPhi(reader, "genJetPhi");
+TTreeReaderValue<std::vector<Float_t>> jPt(reader, "genJetPt");
+TTreeReaderValue<std::vector<Float_t>> jEta(reader, "genJetEta");
+TTreeReaderValue<std::vector<Float_t>> jPhi(reader, "genJetPhi");
 TTreeReaderValue<std::vector<Int_t>> jMult(reader, "genJetChargedMultiplicity");
 
 void initializeChain() {
@@ -63,7 +63,7 @@ void initializeChain() {
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
 
     // Limited Server chain
-    for (Int_t i = 0; i < 1; i++) {   
+    for (Int_t i = 0; i < 25; i++) {   
         std::string str = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_";
         str.append(std::to_string((i+1)));
         str.append(".root");
@@ -86,21 +86,21 @@ void initializeChain() {
 }
 
 // Function that returns the distribution of the simple signal function 
-TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector, 
-                               std::vector<std::vector<std::vector<Double_t>>> jetEtaVals_AllEvents,
-                               std::vector<std::vector<std::vector<Double_t>>> jetPhiVals_AllEvents) {
+TH2D createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector, 
+                               std::vector<std::vector<std::vector<Float_t>>> jetEtaVals_AllEvents,
+                               std::vector<std::vector<std::vector<Float_t>>> jetPhiVals_AllEvents) {
 
     std::cout << "------------------ Calculating Signal Distribution ... ------------------" << std::endl;
     
     std::string signalTitle = "Normalized Signal Distribution for " + title;
 
     // Histogram for the signal distribution
-    TH2F hSignal("hSignal", signalTitle.c_str(), 50, -4, 4, 50, -TMath::Pi(), 2*TMath::Pi());
+    TH2D hSignal("hSignal", signalTitle.c_str(), 50, -4, 4, 50, -TMath::Pi(), 2*TMath::Pi());
 
     // // Setup branches for particles
-    // TTreeReaderValue<std::vector<std::vector<Double_t>>> pPt(reader, "genDau_pt");
-    // TTreeReaderValue<std::vector<std::vector<Double_t>>> pPhi(reader, "genDau_phi");
-    // TTreeReaderValue<std::vector<std::vector<Double_t>>> pEta(reader, "genDau_eta");
+    // TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(reader, "genDau_pt");
+    // TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(reader, "genDau_phi");
+    // TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(reader, "genDau_eta");
     // TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(reader, "genDau_chg");
     // TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(reader, "genDau_pid");  
 
@@ -187,14 +187,14 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
 }
 
 // Function that creates the eta-phi distribution for the pseudoparticle mixing technique
-TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
+TH2D createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
                                std::vector<std::vector<std::vector<Double_t>>> jetEtaVals_AllEvents,
                                std::vector<std::vector<std::vector<Double_t>>> jetPhiVals_AllEvents) {
 
     std::cout << "------------------ Calculating Eta Phi Distribution ... ------------------" << std::endl;
 
     // First intialize the eta-phi distribution for all particles
-    TH2F etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 50, 0, 7, 50, -TMath::Pi(), TMath::Pi());
+    TH2D etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 50, 0, 7, 50, -TMath::Pi(), TMath::Pi());
     
     // // Setup branches for particles
     // TTreeReaderValue<std::vector<std::vector<Double_t>>> pPt(reader, "genDau_pt");
@@ -235,14 +235,14 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
 
 
 // Function that returns the distribution of the simple mixed-event background function
-TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t numMixFactor, TH2F hSignal, TH2F etaPhiDist) {
+TH2D createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t numMixFactor, TH2D hSignal, TH2D etaPhiDist) {
 
     std::cout << "------------------ Calculating Background Distribution ... ------------------" << std::endl;
 
     std::string backgroundTitle = "Background Distribution for " + title;
 
     // Histogram for the background distribution
-    TH2F hBackground("hBackground", backgroundTitle.c_str(), 50, -4, 4, 50, -TMath::Pi(), 2*TMath::Pi());
+    TH2D hBackground("hBackground", backgroundTitle.c_str(), 50, -4, 4, 50, -TMath::Pi(), 2*TMath::Pi());
 
     // ***** PSEUDOPARTICLE MIXING *****
     // Calculating the number of pseudoparticles samples:
@@ -469,7 +469,7 @@ int twoParticleCorr_MultBin() {
 
     // Creating canvas for the signal histogram
     //TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
-    TH2F simpleSignalHist = createSignalDist_JetFrame(multVec, jetEtaVals_AllEvents, jetPhiVals_AllEvents);
+    TH2D simpleSignalHist = createSignalDist_JetFrame(multVec, jetEtaVals_AllEvents, jetPhiVals_AllEvents);
     simpleSignalHist.Write();
 
     // // cSignal->cd();
@@ -478,7 +478,7 @@ int twoParticleCorr_MultBin() {
 
     // Testing eta/phi distribution
     //TCanvas *cEtaPhi = new TCanvas("cEtaPhi", "Canvas for the Eta-Phi Distribution", 800, 600);
-    TH2F etaPhiHist = createEtaPhiDist_JetFrame(multVec, jetEtaVals_AllEvents, jetPhiVals_AllEvents);
+    TH2D etaPhiHist = createEtaPhiDist_JetFrame(multVec, jetEtaVals_AllEvents, jetPhiVals_AllEvents);
     etaPhiHist.Write();
     // cEtaPhi->cd();
     // etaPhiHist.Draw("SURF1");
@@ -486,7 +486,7 @@ int twoParticleCorr_MultBin() {
 
     // Creating canvas for the background histogram
     //TCanvas *cBackground = new TCanvas("cBackground", "Canvas for the Background Distribution", 800, 600);
-    TH2F simpleBackgroundHist = createBackgroundDist_JetFrame(multVec, 5, simpleSignalHist, etaPhiHist);
+    TH2D simpleBackgroundHist = createBackgroundDist_JetFrame(multVec, 5, simpleSignalHist, etaPhiHist);
     simpleBackgroundHist.Write();
     // cBackground->cd();
     // simpleBackgroundHist.Draw("SURF1");
@@ -494,8 +494,8 @@ int twoParticleCorr_MultBin() {
 
     // Creating canvas for the corrected signal distribution
     //TCanvas *cCorrected = new TCanvas("cCorrected", "Canvas for the Corrected Signal Distribution", 1000, 1000);
-    //TH2F correctedHist = simpleSignalHist;
-    TH2F* correctedHist = (TH2F*)simpleSignalHist.Clone();
+    //TH2D correctedHist = simpleSignalHist;
+    TH2D* correctedHist = (TH2D*)simpleSignalHist.Clone();
 
     correctedHist->Divide(&simpleBackgroundHist);
     std::cout << "B(0,0): " << simpleBackgroundHist.GetBinContent(simpleBackgroundHist.FindBin(0,0)) << std::endl;
@@ -535,7 +535,7 @@ int twoParticleCorr_MultBin() {
     // Creating canvas for the projected delta phi histgram
     //TCanvas *cProjection = new TCanvas("cProjection", "Canvas for the Projected Distributions", 800, 600);
     //cProjection->cd();
-    TH2F* correctedCopy = (TH2F*)correctedHist->Clone();
+    TH2D* correctedCopy = (TH2D*)correctedHist->Clone();
     correctedCopy->SetAxisRange(0, 2, "X");
 
     TH1D* projectedHist = correctedCopy->ProjectionY("projectedHist", 1, -1);
