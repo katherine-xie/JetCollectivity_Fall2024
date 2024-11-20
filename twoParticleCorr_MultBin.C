@@ -87,8 +87,8 @@ void initializeChain() {
 
 // Function that returns the distribution of the simple signal function 
 TH2D createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector, 
-                               std::vector<std::vector<std::vector<Float_t>>> jetEtaVals_AllEvents,
-                               std::vector<std::vector<std::vector<Float_t>>> jetPhiVals_AllEvents) {
+                               std::vector<std::vector<std::vector<Double_t>>> jetEtaVals_AllEvents,
+                               std::vector<std::vector<std::vector<Double_t>>> jetPhiVals_AllEvents) {
 
     std::cout << "------------------ Calculating Signal Distribution ... ------------------" << std::endl;
     
