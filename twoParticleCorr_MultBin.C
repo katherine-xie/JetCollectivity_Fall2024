@@ -37,20 +37,20 @@ R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
-std::string title = "pp (N_{ch} #geq 60, 13 TeV)";
+std::string title = "pp (N_{ch} #geq 60, 13 TeV), 25 Files";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
 // Setup branches for particles
-TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(reader, "genDau_pt");
-TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(reader, "genDau_phi");
-TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(reader, "genDau_eta");
+TTreeReaderValue<std::vector<std::vector<Double_t>>> pPt(reader, "genDau_pt");
+TTreeReaderValue<std::vector<std::vector<Double_t>>> pPhi(reader, "genDau_phi");
+TTreeReaderValue<std::vector<std::vector<Double_t>>> pEta(reader, "genDau_eta");
 TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(reader, "genDau_chg");
 TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(reader, "genDau_pid");  
 
-TTreeReaderValue<std::vector<Float_t>> jPt(reader, "genJetPt");
-TTreeReaderValue<std::vector<Float_t>> jEta(reader, "genJetEta");
-TTreeReaderValue<std::vector<Float_t>> jPhi(reader, "genJetPhi");
+TTreeReaderValue<std::vector<Double_t>> jPt(reader, "genJetPt");
+TTreeReaderValue<std::vector<Double_t>> jEta(reader, "genJetEta");
+TTreeReaderValue<std::vector<Double_t>> jPhi(reader, "genJetPhi");
 TTreeReaderValue<std::vector<Int_t>> jMult(reader, "genJetChargedMultiplicity");
 
 void initializeChain() {
@@ -63,7 +63,7 @@ void initializeChain() {
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
 
     // Limited Server chain
-    for (Int_t i = 0; i < 10; i++) {   
+    for (Int_t i = 0; i < 1; i++) {   
         std::string str = "/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_";
         str.append(std::to_string((i+1)));
         str.append(".root");
@@ -87,20 +87,20 @@ void initializeChain() {
 
 // Function that returns the distribution of the simple signal function 
 TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector, 
-                               std::vector<std::vector<std::vector<Float_t>>> jetEtaVals_AllEvents,
-                               std::vector<std::vector<std::vector<Float_t>>> jetPhiVals_AllEvents) {
+                               std::vector<std::vector<std::vector<Double_t>>> jetEtaVals_AllEvents,
+                               std::vector<std::vector<std::vector<Double_t>>> jetPhiVals_AllEvents) {
 
     std::cout << "------------------ Calculating Signal Distribution ... ------------------" << std::endl;
     
     std::string signalTitle = "Normalized Signal Distribution for " + title;
 
     // Histogram for the signal distribution
-    TH2F hSignal("hSignal", signalTitle.c_str(), 50, -2, 2, 50, -TMath::Pi(), 2*TMath::Pi());
+    TH2F hSignal("hSignal", signalTitle.c_str(), 50, -4, 4, 50, -TMath::Pi(), 2*TMath::Pi());
 
     // // Setup branches for particles
-    // TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(reader, "genDau_pt");
-    // TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(reader, "genDau_phi");
-    // TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(reader, "genDau_eta");
+    // TTreeReaderValue<std::vector<std::vector<Double_t>>> pPt(reader, "genDau_pt");
+    // TTreeReaderValue<std::vector<std::vector<Double_t>>> pPhi(reader, "genDau_phi");
+    // TTreeReaderValue<std::vector<std::vector<Double_t>>> pEta(reader, "genDau_eta");
     // TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(reader, "genDau_chg");
     // TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(reader, "genDau_pid");  
 
@@ -125,8 +125,8 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
             for (Int_t i = 0; i < jetEtaVals_AllEvents[eventIndex][jet].size() - 1; i++) {
 
                 // Caluclating eta and phi for particle 1
-                Float_t eta1 = jetEtaVals_AllEvents[eventIndex][jet][i];
-                Float_t phi1 = jetPhiVals_AllEvents[eventIndex][jet][i];
+                Double_t eta1 = jetEtaVals_AllEvents[eventIndex][jet][i];
+                Double_t phi1 = jetPhiVals_AllEvents[eventIndex][jet][i];
                 numTrigg++;
                 //std::cout << "Event " << eventIndex << ": Trigger Particle " << i << ", eta: " << eta1 << ", phi: " << phi1 << std::endl;
 
@@ -134,16 +134,16 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
                 for (Int_t j = i + 1; j < jetEtaVals_AllEvents[eventIndex][jet].size(); j++) {
 
                     // Calculating eta and phi for particle 2
-                    Float_t eta2 = jetEtaVals_AllEvents[eventIndex][jet][j];
-                    Float_t phi2 = jetPhiVals_AllEvents[eventIndex][jet][j];
+                    Double_t eta2 = jetEtaVals_AllEvents[eventIndex][jet][j];
+                    Double_t phi2 = jetPhiVals_AllEvents[eventIndex][jet][j];
                     // std::cout << "Event " << eventIndex << ": Trigg " << i << ", eta: " << eta1 << ", phi: " << phi1 << std::endl;
                     // std::cout<< "               Assoc " << j << ": eta " << eta2 << ", phi " << phi2 << std::endl;
 
                     // Calculating delta eta and delta phi
-                    Float_t deltaEta = fabs(eta2 - eta1);
+                    Double_t deltaEta = fabs(eta2 - eta1);
                     //std::cout << "delta eta: " << deltaEta << std::endl;
 
-                    Float_t deltaPhi = TMath::ACos(TMath::Cos(phi2-phi1));
+                    Double_t deltaPhi = TMath::ACos(TMath::Cos(phi2-phi1));
 
                     // Filling the histograms multiple times due to symmetries
                     hSignal.Fill(deltaEta, deltaPhi);
@@ -188,8 +188,8 @@ TH2F createSignalDist_JetFrame(std::vector<Int_t> multiplicityVector,
 
 // Function that creates the eta-phi distribution for the pseudoparticle mixing technique
 TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
-                               std::vector<std::vector<std::vector<Float_t>>> jetEtaVals_AllEvents,
-                               std::vector<std::vector<std::vector<Float_t>>> jetPhiVals_AllEvents) {
+                               std::vector<std::vector<std::vector<Double_t>>> jetEtaVals_AllEvents,
+                               std::vector<std::vector<std::vector<Double_t>>> jetPhiVals_AllEvents) {
 
     std::cout << "------------------ Calculating Eta Phi Distribution ... ------------------" << std::endl;
 
@@ -197,9 +197,9 @@ TH2F createEtaPhiDist_JetFrame(std::vector<Int_t> multiplicityVector,
     TH2F etaPhiDist("etaPhiDist", "(#eta*, #phi*) Distribution for all Particles", 50, 0, 7, 50, -TMath::Pi(), TMath::Pi());
     
     // // Setup branches for particles
-    // TTreeReaderValue<std::vector<std::vector<Float_t>>> pPt(reader, "genDau_pt");
-    // TTreeReaderValue<std::vector<std::vector<Float_t>>> pPhi(reader, "genDau_phi");
-    // TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(reader, "genDau_eta");
+    // TTreeReaderValue<std::vector<std::vector<Double_t>>> pPt(reader, "genDau_pt");
+    // TTreeReaderValue<std::vector<std::vector<Double_t>>> pPhi(reader, "genDau_phi");
+    // TTreeReaderValue<std::vector<std::vector<Double_t>>> pEta(reader, "genDau_eta");
     // TTreeReaderValue<std::vector<std::vector<Int_t>>> pChg(reader, "genDau_chg");
     // TTreeReaderValue<std::vector<std::vector<Int_t>>> pPid(reader, "genDau_pid");  
 
@@ -242,7 +242,7 @@ TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t 
     std::string backgroundTitle = "Background Distribution for " + title;
 
     // Histogram for the background distribution
-    TH2F hBackground("hBackground", backgroundTitle.c_str(), 50, -2, 2, 50, -TMath::Pi(), 2*TMath::Pi());
+    TH2F hBackground("hBackground", backgroundTitle.c_str(), 50, -4, 4, 50, -TMath::Pi(), 2*TMath::Pi());
 
     // ***** PSEUDOPARTICLE MIXING *****
     // Calculating the number of pseudoparticles samples:
@@ -267,8 +267,8 @@ TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t 
             etaPhiDist.GetRandom2(selectedEta2, selectedPhi2);
             
             // Calculating delta eta and delta phi
-            Float_t deltaEta = fabs(selectedEta2 - selectedEta1);
-            Float_t deltaPhi = TMath::ACos(TMath::Cos(selectedPhi2-selectedPhi1));
+            Double_t deltaEta = fabs(selectedEta2 - selectedEta1);
+            Double_t deltaPhi = TMath::ACos(TMath::Cos(selectedPhi2-selectedPhi1));
 
             //std::cout << i << ": (" << deltaEta << ", " << deltaPhi << ")" << std::endl;
 
@@ -300,6 +300,7 @@ TH2F createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t 
 
     //hBackground.SetStats(0);
 
+    std::cout << "Number of entries in background: " << hBackground.GetEntries() << std::endl;
     std::cout << "Done!" << std::endl;
 
     return hBackground; 
@@ -315,8 +316,8 @@ int twoParticleCorr_MultBin() {
     std::vector<Int_t> multVec; // Stores multiplicity values; vector has same size as num. events
 
     // The following vectors have dimensions of event{jet{particles}}
-    std::vector<std::vector<std::vector<Float_t>>> jetEtaVals_AllEvents; // Stores eta* vals in jet frame
-    std::vector<std::vector<std::vector<Float_t>>> jetPhiVals_AllEvents; // Stores phi* vals in jet frame
+    std::vector<std::vector<std::vector<Double_t>>> jetEtaVals_AllEvents; // Stores eta* vals in jet frame
+    std::vector<std::vector<std::vector<Double_t>>> jetPhiVals_AllEvents; // Stores phi* vals in jet frame
 
     reader.Restart(); // Ensuring event loop starts from beginning
 
@@ -341,14 +342,14 @@ int twoParticleCorr_MultBin() {
         // SELF DEFINED JET FUNCTIONS ARE PROBLEMATIC
         // // ***** Finding the jet pT's and eta (of the whole jet) and storing it in a vector 
         // // This is for the jet selection criteria
-        // std::vector<Float_t> ptOfJetVals_SingleEvent;
-        // std::vector<Float_t> etaOfJetVals_SingleEvent;
+        // std::vector<Double_t> ptOfJetVals_SingleEvent;
+        // std::vector<Double_t> etaOfJetVals_SingleEvent;
         // // ***** JET LOOP *****
         // for (Int_t i = 0; i < pPt->size(); i++) {
         //    // std::cout << "i: " << i<< std::endl;
         //     // Calculating the pT and etas of the ith jet (NOTE: I am using ALL particles including the non-charged ones)
-        //     Float_t currPtOfJet = calculateJetPt((*pPt)[i], (*pPhi)[i]);
-        //     Float_t currEtaOfJet = calculateJetEta((*pPt)[i], (*pEta)[i], (*pPhi)[i]); 
+        //     Double_t currPtOfJet = calculateJetPt((*pPt)[i], (*pPhi)[i]);
+        //     Double_t currEtaOfJet = calculateJetEta((*pPt)[i], (*pEta)[i], (*pPhi)[i]); 
         //     //std::cout << "Macro: " << currEtaOfJet << std::endl;
         //     ptOfJetVals_SingleEvent.push_back(currPtOfJet);
         //     etaOfJetVals_SingleEvent.push_back(currEtaOfJet);
@@ -368,15 +369,15 @@ int twoParticleCorr_MultBin() {
 
     
         // ***** Calculating the coordinates in the jet frame *****
-        std::vector<std::vector<Float_t>> jetEtaVals_SingleEvent;
-        std::vector<std::vector<Float_t>> jetPhiVals_SingleEvent;
+        std::vector<std::vector<Double_t>> jetEtaVals_SingleEvent;
+        std::vector<std::vector<Double_t>> jetPhiVals_SingleEvent;
 
         // Jet Loop
         for (Int_t i = 0; i < pPt->size(); i++) {
 
             //std::cout << "Jet size (before cut)" << i << ": " << (*pPt)[i].size() << std::endl;
-            std::vector<Float_t> jetEtaVals_PerJet;
-            std::vector<Float_t> jetPhiVals_PerJet;
+            std::vector<Double_t> jetEtaVals_PerJet;
+            std::vector<Double_t> jetPhiVals_PerJet;
 
             // if (std::isnan(ptOfJetVals_SingleEvent[i])) {continue;}
             // if (std::isnan(etaOfJetVals_SingleEvent[i])) {continue;}
@@ -419,12 +420,12 @@ int twoParticleCorr_MultBin() {
                                          (*pPhi)[i][j]);
 
                 // Calculating the jT value and applying selection criteria
-                Float_t currJetPt = ptWRTJet(jet, currParticle);
+                Double_t currJetPt = ptWRTJet(jet, currParticle);
                 if (std::isnan(currJetPt)) {continue;}
                 if (currJetPt <= 0.3 || currJetPt >= 3) {continue;}
 
-                Float_t currJetEta = etaWRTJet(jet, currParticle);     
-                Float_t currJetPhi = phiWRTJet(jet, currParticle);
+                Double_t currJetEta = etaWRTJet(jet, currParticle);     
+                Double_t currJetPhi = phiWRTJet(jet, currParticle);
                 
                 if (std::isnan(currJetEta)) {continue;}
                 if (std::isnan(currJetPhi)) {continue;}
@@ -464,7 +465,7 @@ int twoParticleCorr_MultBin() {
     //     }
     // }
 
-    TFile *fout = new TFile("ReducedBackground_10Files.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("newestTest_25Files.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     //TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
