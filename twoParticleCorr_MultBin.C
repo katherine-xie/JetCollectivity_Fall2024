@@ -466,7 +466,7 @@ int twoParticleCorr_MultBin() {
     //     }
     // }
 
-    TFile *fout = new TFile("newestTest_100Files.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("notCompiled_WithChanges_100Files.root", "recreate"); // Creating output file
 
     // Creating canvas for the signal histogram
     //TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
@@ -528,7 +528,7 @@ int twoParticleCorr_MultBin() {
     correctedHist->SetLabelFont(132, "T");
     correctedHist->SetLabelFont(132, "XYZ");
 
-    correctedHist->SetAxisRange(-2, 2, "X");
+    correctedHist->SetAxisRange(-4, 4, "X");
     correctedHist->SetAxisRange(-2, 5, "Y");
     correctedHist->Write();
     //cCorrected->Write(); 
