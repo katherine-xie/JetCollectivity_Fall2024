@@ -38,7 +38,7 @@ R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
-std::string title = "pp (13 TeV), Inclusive, All Server Files ";
+std::string title = "pp (13 TeV), All Server Files ";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
@@ -82,8 +82,7 @@ void initializeChain() {
     // }
 
     // Server chain
-    //chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
-
+    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
 
     // Server chain (Inclusive)
     chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_CP5_inclusive_*.root");
@@ -509,7 +508,7 @@ int twoParticleCorr_MultBin() {
     //     }
     // }
 
-    TFile *fout = new TFile("testServer_AllInclusive.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("Server_AllFiles.root", "recreate"); // Creating output file
 
     //Testing if the jetEtaVals array works
     std::cout << "jetEtaVals_AllEvents[0] size: " << jetEtaVals_AllEvents[0].size() << std::endl;
