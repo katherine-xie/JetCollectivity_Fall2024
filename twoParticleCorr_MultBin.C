@@ -38,7 +38,7 @@ R__LOAD_LIBRARY(./SHARED_LIB_SERVER/COORDINATE_FUNCTIONS_C.so);
 
 
 // // Global variables
-std::string title = "pp (13 TeV), All Server Files ";
+std::string title = "pp (13 TeV), Server Files, All-Inclusive";
 TChain chain("trackTree");
 TTreeReader reader(&chain);
 
@@ -61,17 +61,21 @@ bool isInMultBin(Int_t currJetMult, Int_t lowBound, Int_t highBound) {
 
 void initializeChain() {
 
-    // // Local chain (inclusive)
+    // Local chain (inclusive)
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_CP5_inclusive_1.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_CP5_inclusive_2.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_CP5_inclusive_3.root");
+    //chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_CP5_inclusive_*.root");
 
-    // //Local chain
+
+    //Local chain
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1001.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1002.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1003.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
+    //chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_*.root");
+
 
     // // Limited Server chain
     // for (Int_t i = 0; i < 100; i++) {   
@@ -351,6 +355,14 @@ int twoParticleCorr_MultBin() {
     Int_t jMultLower[10] = {0,  20,  30,  40,  50,  59,  66,  76,  83,   78};
     Int_t jMultUpper[10] = {20, 30,  40,  50,  59,  66,  76,  83,  1000, 1000};
 
+    // Creating histogram for the multiplicity distribution
+    TH1D* hBinDist[10];
+    for (Int_t i = 0; i < 10; i++) {
+        std::string binDistName = "hBinDist" + std::to_string(i);
+        std::string binDistTitle = "Multiplicity Distributon for Bin " + std::to_string(i);
+        hBinDist[i] = new TH1D(binDistName.c_str(), binDistTitle.c_str(), 120, 0, 120);
+    }
+
     reader.Restart(); // Ensuring event loop starts from beginning
 
     // ***** EVENT LOOP *****
@@ -423,7 +435,7 @@ int twoParticleCorr_MultBin() {
 
                 // Applying jet pass for each of the bins
                 if (!isInMultBin((*jMult)[i], jMultLower[arrIndex], jMultUpper[arrIndex])) {continue;}
-
+                hBinDist[arrIndex]->Fill((*jMult)[i]);
                 //std::cout << currEventIndex << ", Array " << arrIndex << ", Jet " << i << ", Jet Mult: " << (*jMult)[i] << std::endl;
 
                 // std::cout << "Event " << currEventIndex << ", Jet " << i << 
@@ -489,7 +501,7 @@ int twoParticleCorr_MultBin() {
             jetPhiVals_AllEvents[arrIndex].push_back(jetPhiVals_SingleEvent);
         } // Array loop end
 
-        std::cout << "Event " << currEventIndex << " done" << std::endl;
+       //std::cout << "Event " << currEventIndex << " done" << std::endl;
     } // Event Loop End
 
 
@@ -510,7 +522,7 @@ int twoParticleCorr_MultBin() {
     //     }
     // }
 
-    TFile *fout = new TFile("Server_AllFiles.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("newestLocalTest.root", "recreate"); // Creating output file
 
     //Testing if the jetEtaVals array works
     std::cout << "jetEtaVals_AllEvents[0] size: " << jetEtaVals_AllEvents[0].size() << std::endl;
@@ -534,6 +546,8 @@ int twoParticleCorr_MultBin() {
     //TH2D* hCorrectedArr[10]; 
 
     for (Int_t arrIndex = 0; arrIndex < 10; arrIndex++) {
+
+        hBinDist[arrIndex]->Write();
 
         std::cout << "Calculating array " << arrIndex << " ... ";
 
@@ -633,12 +647,6 @@ int twoParticleCorr_MultBin() {
     }
 
    
-
-    // delete cSignal;
-    // delete cEtaPhi;
-    // delete cBackground;
-    // delete cCorrected;
-    // delete cProjection;  
 
     fout->Close();
     t.Print();
