@@ -133,7 +133,7 @@ TH2D createSignalDist_JetFrame(std::vector<Int_t> multVec,
         // Checking to see if there are any jets in the vector
         if (jetEtaVals_AllEvents[eventIndex].size() == 0) {continue;}            
 
-        std::cout << "************** Event " << eventIndex << ", Num jets:  " << jetEtaVals_AllEvents[eventIndex].size() << " **************" << std::endl;
+        //std::cout << "************** Event " << eventIndex << ", Num jets:  " << jetEtaVals_AllEvents[eventIndex].size() << " **************" << std::endl;
 
 
         // Looping through jets in the jetEtaVals vector
@@ -141,7 +141,7 @@ TH2D createSignalDist_JetFrame(std::vector<Int_t> multVec,
 
             jetCounter++;
 
-            std::cout << "Jet " << jet << ", Num particles: " << jetEtaVals_AllEvents[eventIndex][jet].size() << std::endl;
+            //std::cout << "Jet " << jet << ", Num particles: " << jetEtaVals_AllEvents[eventIndex][jet].size() << std::endl;
             
             // ***** PARTICLE LOOP ******
             // Particle 1 Loop
@@ -424,7 +424,7 @@ int twoParticleCorr_MultBin() {
                 // Applying jet pass for each of the bins
                 if (!isInMultBin((*jMult)[i], jMultLower[arrIndex], jMultUpper[arrIndex])) {continue;}
 
-                std::cout << currEventIndex << ", Array " << arrIndex << ", Jet " << i << ", Jet Mult: " << (*jMult)[i] << std::endl;
+                //std::cout << currEventIndex << ", Array " << arrIndex << ", Jet " << i << ", Jet Mult: " << (*jMult)[i] << std::endl;
 
                 // std::cout << "Event " << currEventIndex << ", Jet " << i << 
                 // ": Pt of Jet = " << (*jPt)[i] << 
@@ -488,6 +488,8 @@ int twoParticleCorr_MultBin() {
             jetEtaVals_AllEvents[arrIndex].push_back(jetEtaVals_SingleEvent);
             jetPhiVals_AllEvents[arrIndex].push_back(jetPhiVals_SingleEvent);
         } // Array loop end
+
+        std::cout << "Event " << currEventIndex << " done" << std::endl;
     } // Event Loop End
 
 
@@ -516,14 +518,14 @@ int twoParticleCorr_MultBin() {
     std::cout << "jetEtaVals_AllEvents[6] size: " << jetEtaVals_AllEvents[6].size() << std::endl;
     std::cout << "jetEtaVals_AllEvents[9] size: " << jetEtaVals_AllEvents[9].size() << std::endl;
 
-    for (Int_t event = 0; event < jetEtaVals_AllEvents[8].size(); event++) {
-        if (jetEtaVals_AllEvents[8][event].size() == 0) {continue;}
-        std::cout << "Event " << event << ": " << jetEtaVals_AllEvents[8][event].size() << " jets" << std::endl;
-    }
+    // for (Int_t event = 0; event < jetEtaVals_AllEvents[8].size(); event++) {
+    //     if (jetEtaVals_AllEvents[8][event].size() == 0) {continue;}
+    //     std::cout << "Event " << event << ": " << jetEtaVals_AllEvents[8][event].size() << " jets" << std::endl;
+    // }
 
-    for (Int_t j = 0; j < jetEtaVals_AllEvents[7][4194194].size(); j++) {
-        std::cout << "Num tracks in jet " << j << ": " << jetEtaVals_AllEvents[7][4194194][j].size() << std::endl;
-    }
+    // for (Int_t j = 0; j < jetEtaVals_AllEvents[7][4194194].size(); j++) {
+    //     std::cout << "Num tracks in jet " << j << ": " << jetEtaVals_AllEvents[7][4194194][j].size() << std::endl;
+    // }
 
     // Creating array of histograms
     TH2D hSignalArr[10]; 
@@ -532,6 +534,8 @@ int twoParticleCorr_MultBin() {
     //TH2D* hCorrectedArr[10]; 
 
     for (Int_t arrIndex = 0; arrIndex < 10; arrIndex++) {
+
+        std::cout << "Calculating array " << arrIndex << " ... "
 
         // Creating canvas for the signal histogram
         //TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
@@ -624,6 +628,8 @@ int twoParticleCorr_MultBin() {
         // projectedBackgroundHist->SetLineColor(kBlue);
         // //projectedBackgroundHist->Draw("HIST L SAME"); 
         // projectedBackgroundHist->Write();
+
+        std::cout << "Done!" << std::endl;
     }
 
    
