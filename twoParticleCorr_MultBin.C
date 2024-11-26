@@ -535,7 +535,7 @@ int twoParticleCorr_MultBin() {
 
     for (Int_t arrIndex = 0; arrIndex < 10; arrIndex++) {
 
-        std::cout << "Calculating array " << arrIndex << " ... "
+        std::cout << "Calculating array " << arrIndex << " ... ";
 
         // Creating canvas for the signal histogram
         //TCanvas *cSignal = new TCanvas("cSignal", "Canvas for the Signal Distribution", 800, 600);
