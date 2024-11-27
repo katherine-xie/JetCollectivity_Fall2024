@@ -339,7 +339,7 @@ TH2D createBackgroundDist_JetFrame(std::vector<Int_t> multiplicityVector, Int_t 
 } 
 
 
-int twoParticleCorr_MultBin() {
+void twoParticleCorr_MultBin() {
 
     std::cout << "------------------ Now calculating " << title << " ------------------" << std::endl;
 
@@ -650,5 +650,4 @@ int twoParticleCorr_MultBin() {
 
     fout->Close();
     t.Print();
-    return 0;
 }
