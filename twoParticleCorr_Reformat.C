@@ -59,7 +59,7 @@ bool isInTrackBin(int currJetMult, int lowBound, int highBound) {
     else {return false;}
 }
 
-bool isInPtBin(int currPt, int lowBound, int highBound) {
+bool isInPtBin(float currPt, float lowBound, float highBound) {
     if (currPt >= lowBound && currPt < highBound) {return true;} 
     else {return false;}
 }
@@ -80,8 +80,8 @@ void initializeChain() {
 
 
     //Local chain
-    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root");
-    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1001.root");
+    //chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root");
+    //chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1001.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1002.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1003.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
@@ -97,7 +97,7 @@ void initializeChain() {
     // }
 
     // Server chain
-    //chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
+    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
 
     // Server chain (Inclusive)
     chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_CP5_inclusive_*.root");
@@ -126,20 +126,20 @@ void twoParticleCorr_Reformat() {
     const int trackBinUpper[10] = {20, 30,  40,  50,  59,  66,  76,  83,  1000, 1000};
 
     // jT bin bounds
-    const float ptBinLower[3] = {0.3,  0.5,  1.0};
-    const float ptBinUpper[3] = {3.0,  3.0,  3.0};
+    const float ptBinLower[4] = {0.0, 0.3,  0.5,  1.0};
+    const float ptBinUpper[4] = {0.3, 3.0,  3.0,  3.0};
 
     // Declaring Histograms
     TH1D* hEventPass = new TH1D("hEventPass", "Events Passed Per Track Bin", 10, 0, 10);
     TH1D* hJetPass = new TH1D("hJetPass", "Jets Passed Per Track Bin", 10, 0, 10);
-    TH2D* hPairs = new TH2D("hPairs", "Pairs between Track Bins and pT Bins", 10, 0, 10, 3, 0, 3);
+    TH2D* hPairs = new TH2D("hPairs", "Pairs between Track Bins and pT Bins", 10, 0, 10, 4, 0, 4);
 
     // Histogram Arrays
     TH1D* hBinDist[10];
-    TH1D* hJtDist[10]; // jT distribution for each track bin 
-    TH2D* hSignal[10][3];
-    TH2D* hBackground[10][3];
-    TH2D* hEtaPhi[10][3];
+    TH1D* hJtDist[10][4]; // jT distribution for each track bin and pT bin
+    TH2D* hSignal[10][4];
+    TH2D* hBackground[10][4];
+    TH2D* hEtaPhi[10][4];
 
     // Counters (for verification)
     int numSelectedJets = 0;
@@ -152,12 +152,12 @@ void twoParticleCorr_Reformat() {
         std::string binDistTitle = "Multiplicity Distributon (Track Bin " + std::to_string(tBin) + ")";
         hBinDist[tBin] = new TH1D(binDistName.c_str(), binDistTitle.c_str(), 120, 0, 120);
 
-        std::string jTBinDistName = "hJtDist" + std::to_string(tBin);
-        std::string jTBinDistTitle = "jT Distributon (Track Bin " + std::to_string(tBin) + ")";
-        hJtDist[tBin] = new TH1D(jTBinDistName.c_str(), jTBinDistTitle.c_str(), 100, 0, 4);
-
         // pT bin loop
-        for (int pBin = 0; pBin < 3; pBin++) {
+        for (int pBin = 0; pBin < 4; pBin++) {
+
+            std::string jTBinDistName = "hJtDist" + std::to_string(tBin) + std::to_string(pBin);
+            std::string jTBinDistTitle = "jT Distributon (Track Bin " + std::to_string(tBin) + ", pT Bin " + std::to_string(pBin) + ")";
+            hJtDist[tBin][pBin] = new TH1D(jTBinDistName.c_str(), jTBinDistTitle.c_str(), 100, 0, 4);
 
             // Initializing signal hist
             std::string signalName = "hSignal" + std::to_string(tBin) + std::to_string(pBin);
@@ -196,12 +196,12 @@ void twoParticleCorr_Reformat() {
 
                 // Track bin loop 
                 for (int tBin = 0; tBin < 10; tBin++) {
-                    if (isInTrackBin((*jMult)[iJet], trackBinLower[tBin], trackBinUpper[tBin])) {hJetPass->Fill(tBin);} // Filling hJetPass
-                    if (isInTrackBin((*jMult)[iJet], trackBinLower[tBin], trackBinUpper[tBin])) {hBinDist[tBin]->Fill((*jMult)[iJet]);} // Filling hBinDist
+                    if (!isInTrackBin((*jMult)[iJet], trackBinLower[tBin], trackBinUpper[tBin])) {continue;} 
+                    hJetPass->Fill(tBin);
+                    hBinDist[tBin]->Fill((*jMult)[iJet]);
                 }
 
                 TVector3 jet;
-
                 double jetPt = (*jPt)[iJet];
                 double jetEta = (*jEta)[iJet];
                 double jetPhi = (*jPhi)[iJet];
@@ -241,13 +241,13 @@ void twoParticleCorr_Reformat() {
                     for (int tBin = 0; tBin < 10; tBin++) {
 
                         if (!isInTrackBin((*jMult)[iJet], trackBinLower[tBin], trackBinUpper[tBin])) {continue;}
-                        hJtDist[tBin]->Fill(jetFramePt);
-
+                        
                         // pT bin loop
-                        for (int pBin = 0; pBin < 3; pBin++) {
+                        for (int pBin = 0; pBin < 4; pBin++) {
                             
                             if (!isInPtBin(jetFramePt, ptBinLower[pBin], ptBinUpper[pBin])) {continue;}
-
+                            
+                            hJtDist[tBin][pBin]->Fill(jetFramePt);
                             hEtaPhi[tBin][pBin]->Fill(jetFrameEta, jetFramePhi);
 
                         } // pT bin loop end
@@ -286,7 +286,7 @@ void twoParticleCorr_Reformat() {
                             if (!isInTrackBin((*jMult)[iJet], trackBinLower[tBin], trackBinUpper[tBin])) {continue;}
 
                             // pT Bin
-                            for (int pBin = 0; pBin < 3; pBin++) {
+                            for (int pBin = 0; pBin < 4; pBin++) {
                                     
                                     // Both particles need to be in pT bin
                                     if (isInPtBin(jetFramePt, ptBinLower[pBin], ptBinUpper[pBin]) &&
@@ -321,7 +321,7 @@ void twoParticleCorr_Reformat() {
     int mixFactor = 5;
 
     for (int tBin = 0; tBin < 10; tBin++) {
-        for (int pBin = 0; pBin < 3; pBin++) {
+        for (int pBin = 0; pBin < 4; pBin++) {
 
                 long int numSigEntries =  hSignal[tBin][pBin]->GetEntries(); // should be 6 times as much (filled 6 times)
                 long int numhPairsEntries = hPairs->GetBinContent(hPairs->FindBin(tBin, pBin));
@@ -374,7 +374,7 @@ void twoParticleCorr_Reformat() {
         }
     }
 
-    TFile *fout = new TFile("server_reformat_test.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("fullServerRun.root", "recreate"); // Creating output file
 
     // Saving histograms to output file
     hJetPass->Write();
@@ -383,12 +383,12 @@ void twoParticleCorr_Reformat() {
     for (int tBin = 0; tBin < 10; tBin++) {
 
         hBinDist[tBin]->Write();
-        hJtDist[tBin]->Write();
 
-        for (int pBin = 0; pBin < 3; pBin++) {
+        for (int pBin = 0; pBin < 4; pBin++) {
             hEtaPhi[tBin][pBin]->Write();
             hSignal[tBin][pBin]->Write();
             hBackground[tBin][pBin]->Write();
+            hJtDist[tBin][pBin]->Write();
         }
     }
 
