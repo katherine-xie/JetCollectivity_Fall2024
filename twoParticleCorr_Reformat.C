@@ -131,7 +131,7 @@ void twoParticleCorr_Reformat() {
 
     // Declaring Histograms
     TH1D* hEventPass = new TH1D("hEventPass", "Events Passed Per Track Bin", 10, 0, 10);
-    TH2D* hJetPass = new TH1D("hJetPass", "Jets Passed Per Track Bin and pT Bins", 10, 0, 10, 4, 0, 4);
+    TH1D* hJetPass = new TH1D("hJetPass", "Jets Passed Per Track Bin and pT Bins", 10, 0, 10);
     TH2D* hPairs = new TH2D("hPairs", "Pairs between Track Bins and pT Bins", 10, 0, 10, 4, 0, 4);
 
     // Histogram Arrays
@@ -312,7 +312,7 @@ void twoParticleCorr_Reformat() {
 
                                         hSignal[tBin][pBin]->Fill(deltaEta, deltaPhi, 1.0/numTriggCurrJet);
                                         hSignal[tBin][pBin]->Fill(-deltaEta, deltaPhi, 1.0/numTriggCurrJet);
-                                        hSignal[tBin][pBin]->Fill(deltaEta, -deltaPh, 1.0/numTriggCurrJet);
+                                        hSignal[tBin][pBin]->Fill(deltaEta, -deltaPhi, 1.0/numTriggCurrJet);
                                         hSignal[tBin][pBin]->Fill(-deltaEta, -deltaPhi, 1.0/numTriggCurrJet);
                                         hSignal[tBin][pBin]->Fill(deltaEta, 2*TMath::Pi() - deltaPhi, 1.0/numTriggCurrJet);
                                         hSignal[tBin][pBin]->Fill(-deltaEta, 2*TMath::Pi() - deltaPhi, 1.0/numTriggCurrJet);
