@@ -131,13 +131,14 @@ void twoParticleCorr_Reformat() {
 
     // Declaring Histograms
     TH1D* hEventPass = new TH1D("hEventPass", "Events Passed Per Track Bin", 10, 0, 10);
-    TH1D* hJetPass = new TH1D("hJetPass", "Jets Passed Per Track Bin", 10, 0, 10);
+    TH2D* hJetPass = new TH1D("hJetPass", "Jets Passed Per Track Bin and pT Bins", 10, 0, 10, 4, 0, 4);
     TH2D* hPairs = new TH2D("hPairs", "Pairs between Track Bins and pT Bins", 10, 0, 10, 4, 0, 4);
 
     // Histogram Arrays
     TH1D* hBinDist[10];
     TH1D* hJtDist[10][4]; // jT distribution for each track bin and pT bin
     TH2D* hSignal[10][4];
+    TH2D* hSignal_Normalized[10][4];
     TH2D* hBackground[10][4];
     TH2D* hEtaPhi[10][4];
 
@@ -190,6 +191,7 @@ void twoParticleCorr_Reformat() {
             for (int iJet = 0; iJet < pPt->size(); iJet++) {
 
                 int numTracksinJet = (*pPt)[iJet].size(); // Number of particles in the ith jet
+                int numTriggCurrJet = 0; // Counter for trigger particle sper jet
 
                 if (!jetPass((*jEta)[iJet], (*jPt)[iJet])) {continue;} // Applying jet criteria 
                 numSelectedJets++;
@@ -208,6 +210,17 @@ void twoParticleCorr_Reformat() {
 
                 jet.SetPtEtaPhi(jetPt, jetEta, jetPhi); 
 
+                // Particle loop (to find number of trigger particles) 
+                for (int iParticle = 0; iParticle < numTracksinJet; iParticle++) {
+
+                    // Particle selection criteria (lab frame)
+                    // pT > 0.3, |eta| < 2.4
+                    if ((*pChg)[iJet][iParticle] == 0) {continue;}
+                    if((*pPt)[iJet][iParticle] <= 0.3) {continue;}
+                    if(fabs((*pEta)[iJet][iParticle]) >= 2.4) continue;
+
+                    numTriggCurrJet++;
+                }
 
                 // Particle loop
                 for (int iTrack = 0; iTrack < numTracksinJet; iTrack++) {
@@ -263,7 +276,7 @@ void twoParticleCorr_Reformat() {
                         // pT > 0.3, |eta| < 2.4
                         if ((*pChg)[iJet][iTrack] == 0) {continue;}
                         if((*pPt)[iJet][iTrack] <= 0.3) {continue;}
-                        if(fabs((*pEta)[iJet][iTrack]) >= 2.4) continue;
+                        if(fabs((*pEta)[iJet][iTrack]) >= 2.4) {continue;}
                         
                         TVector3 assocParticle;
 
@@ -297,12 +310,12 @@ void twoParticleCorr_Reformat() {
 
                                         //std::cout << "Event " << currEventIndex << ", Track " << jTrack << "/" << numTracksinJet << ", [" << tBin << "][" << pBin << "]: (" << deltaEta << ", " << deltaPhi << ")" << std::endl;
 
-                                        hSignal[tBin][pBin]->Fill(deltaEta, deltaPhi);
-                                        hSignal[tBin][pBin]->Fill(-deltaEta, deltaPhi);
-                                        hSignal[tBin][pBin]->Fill(deltaEta, -deltaPhi);
-                                        hSignal[tBin][pBin]->Fill(-deltaEta, -deltaPhi);
-                                        hSignal[tBin][pBin]->Fill(deltaEta, 2*TMath::Pi() - deltaPhi);
-                                        hSignal[tBin][pBin]->Fill(-deltaEta, 2*TMath::Pi() - deltaPhi);
+                                        hSignal[tBin][pBin]->Fill(deltaEta, deltaPhi, 1.0/numTriggCurrJet);
+                                        hSignal[tBin][pBin]->Fill(-deltaEta, deltaPhi, 1.0/numTriggCurrJet);
+                                        hSignal[tBin][pBin]->Fill(deltaEta, -deltaPh, 1.0/numTriggCurrJet);
+                                        hSignal[tBin][pBin]->Fill(-deltaEta, -deltaPhi, 1.0/numTriggCurrJet);
+                                        hSignal[tBin][pBin]->Fill(deltaEta, 2*TMath::Pi() - deltaPhi, 1.0/numTriggCurrJet);
+                                        hSignal[tBin][pBin]->Fill(-deltaEta, 2*TMath::Pi() - deltaPhi, 1.0/numTriggCurrJet);
                                         hPairs->Fill(tBin, pBin);
 
                                     }
@@ -374,7 +387,7 @@ void twoParticleCorr_Reformat() {
         }
     }
 
-    TFile *fout = new TFile("fullServerRun.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("fullServerRun_NormalizedSignal.root", "recreate"); // Creating output file
 
     // Saving histograms to output file
     hJetPass->Write();
