@@ -122,23 +122,28 @@ void twoParticleCorr_Reformat() {
     initializeChain();
 
     // Jet Multiplicity bin bounds
-    const int trackBinLower[10] = {0,  20,  30,  40,  50,  59,  66,  76,  83,   78};
-    const int trackBinUpper[10] = {20, 30,  40,  50,  59,  66,  76,  83,  1000, 1000};
+    // const int trackBinLower[10] = {0,  20,  30,  40,  50,  59,  66,  76,  83,   78};
+    // const int trackBinUpper[10] = {20, 30,  40,  50,  59,  66,  76,  83,  1000, 1000};
+
+    const int trackBinLower[10] = {0,  20,  30,  40,  50,  60,  69,  79,  90,  97};
+    const int trackBinUpper[10] = {20, 30,  40,  50,  60,  69,  79,  90,  97,  1000};
 
     // jT bin bounds
     const float ptBinLower[4] = {0.0, 0.3,  0.5,  1.0};
     const float ptBinUpper[4] = {0.3, 3.0,  3.0,  3.0};
 
+    const float EtaBW = 0.3; // bin width for eta
+    const float PhiBW = TMath::Pi()/16; // bin width for phi
+
     // Declaring Histograms
     TH1D* hEventPass = new TH1D("hEventPass", "Events Passed Per Track Bin", 10, 0, 10);
-    TH1D* hJetPass = new TH1D("hJetPass", "Jets Passed Per Track Bin and pT Bins", 10, 0, 10);
+    TH1D* hJetPass = new TH1D("hJetPass", "Jets Passed Per Track Bin", 10, 0, 10);
     TH2D* hPairs = new TH2D("hPairs", "Pairs between Track Bins and pT Bins", 10, 0, 10, 4, 0, 4);
 
     // Histogram Arrays
     TH1D* hBinDist[10];
     TH1D* hJtDist[10][4]; // jT distribution for each track bin and pT bin
     TH2D* hSignal[10][4];
-    TH2D* hSignal_Normalized[10][4];
     TH2D* hBackground[10][4];
     TH2D* hEtaPhi[10][4];
 
@@ -163,12 +168,14 @@ void twoParticleCorr_Reformat() {
             // Initializing signal hist
             std::string signalName = "hSignal" + std::to_string(tBin) + std::to_string(pBin);
             std::string signalTitle = "Signal Distribution (Track Bin " + std::to_string(tBin) + ", pT Bin " + std::to_string(pBin) + ")";
-            hSignal[tBin][pBin] = new TH2D(signalName.c_str(), signalTitle.c_str(), 41, -4, 4, 33, -TMath::Pi(), 2*TMath::Pi());
+
+
+            hSignal[tBin][pBin] = new TH2D(signalName.c_str(), signalTitle.c_str(), 41, -(20*EtaBW)-(0.5*EtaBW), (20*EtaBW)+(0.5*EtaBW), 33, -(8*PhiBW)-0.5*PhiBW, (24*PhiBW)+0.5*PhiBW);
 
             // Initializing background hist
             std::string backgroundName = "hBackground" + std::to_string(tBin) + std::to_string(pBin);
             std::string backgroundTitle = "Background Distribution (Track Bin " + std::to_string(tBin) + ", pT Bin " + std::to_string(pBin) + ")";
-            hBackground[tBin][pBin] = new TH2D(backgroundName.c_str(), backgroundTitle.c_str(), 41, -4, 4, 33, -TMath::Pi(), 2*TMath::Pi());
+            hBackground[tBin][pBin] = new TH2D(backgroundName.c_str(), backgroundTitle.c_str(), 41, -(20*EtaBW)-(0.5*EtaBW), (20*EtaBW)+(0.5*EtaBW), 33, -(8*PhiBW)-0.5*PhiBW, (24*PhiBW)+0.5*PhiBW);
 
             // Initializing eta-phi hist
             std::string etaPhiName = "hEtaPhi" + std::to_string(tBin) + std::to_string(pBin);
@@ -199,8 +206,8 @@ void twoParticleCorr_Reformat() {
                 // Track bin loop 
                 for (int tBin = 0; tBin < 10; tBin++) {
                     if (!isInTrackBin((*jMult)[iJet], trackBinLower[tBin], trackBinUpper[tBin])) {continue;} 
-                    hJetPass->Fill(tBin);
                     hBinDist[tBin]->Fill((*jMult)[iJet]);
+                    hJetPass->Fill(tBin);
                 }
 
                 TVector3 jet;
@@ -218,7 +225,6 @@ void twoParticleCorr_Reformat() {
                     if ((*pChg)[iJet][iParticle] == 0) {continue;}
                     if((*pPt)[iJet][iParticle] <= 0.3) {continue;}
                     if(fabs((*pEta)[iJet][iParticle]) >= 2.4) continue;
-
                     numTriggCurrJet++;
                 }
 
@@ -243,9 +249,9 @@ void twoParticleCorr_Reformat() {
                     double jetFrameEta = etaWRTJet(jet, currParticle);     
                     double jetFramePhi = phiWRTJet(jet, currParticle);
                     
-                    if (std::isnan(jetFramePt)) {continue;}
-                    if (std::isnan(jetFrameEta)) {continue;}
-                    if (std::isnan(jetFramePhi)) {continue;}
+                    //if (std::isnan(jetFramePt)) {continue;}
+                    //if (std::isnan(jetFrameEta)) {continue;}
+                    //if (std::isnan(jetFramePhi)) {continue;}
 
 
                     // FILLING ETA PHI HISTOGRAM HERE
@@ -261,7 +267,7 @@ void twoParticleCorr_Reformat() {
                             if (!isInPtBin(jetFramePt, ptBinLower[pBin], ptBinUpper[pBin])) {continue;}
                             
                             hJtDist[tBin][pBin]->Fill(jetFramePt);
-                            hEtaPhi[tBin][pBin]->Fill(jetFrameEta, jetFramePhi);
+                            hEtaPhi[tBin][pBin]->Fill(jetFrameEta, jetFramePhi, 1.0/numTriggCurrJet);
 
                         } // pT bin loop end
                     } // Track bin loop end
@@ -289,9 +295,9 @@ void twoParticleCorr_Reformat() {
                         double jetFrameEta_assoc = etaWRTJet(jet, assocParticle);     
                         double jetFramePhi_assoc = phiWRTJet(jet, assocParticle);
                     
-                        if (std::isnan(jetFramePt_assoc)) {continue;}
-                        if (std::isnan(jetFrameEta_assoc)) {continue;}
-                        if (std::isnan(jetFramePhi_assoc)) {continue;}
+                        //if (std::isnan(jetFramePt_assoc)) {continue;}
+                        //if (std::isnan(jetFrameEta_assoc)) {continue;}
+                        //if (std::isnan(jetFramePhi_assoc)) {continue;}
                         
                         // Track bin
                         for (int tBin = 0; tBin < 10; tBin++) {
@@ -387,7 +393,7 @@ void twoParticleCorr_Reformat() {
         }
     }
 
-    TFile *fout = new TFile("fullServerRun_NormalizedSignal.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("fullServerRun_Rebinned.root", "recreate"); // Creating output file
 
     // Saving histograms to output file
     hJetPass->Write();
