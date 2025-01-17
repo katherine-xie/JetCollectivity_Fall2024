@@ -66,7 +66,7 @@ bool isInPtBin(float currPt, float lowBound, float highBound) {
 
 // Jet eta < 1.6, Jet pt > 550 GeV
 bool jetPass(float jetEta, float jetPt) {
-    if (jetEta < 1.6 && jetPt > 550) {return true;}
+    if (fabs(jetEta) < 1.6 && jetPt > 550) {return true;}
     else {return false;}
 }
 
@@ -393,7 +393,7 @@ void twoParticleCorr_Reformat() {
         }
     }
 
-    TFile *fout = new TFile("fullServerRun_Rebinned.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("fullRun_FixedJetEta.root", "recreate"); // Creating output file
 
     // Saving histograms to output file
     hJetPass->Write();
