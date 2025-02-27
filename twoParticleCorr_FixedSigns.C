@@ -49,7 +49,7 @@ TTreeReaderValue<std::vector<std::vector<Float_t>>> pEta(reader, "genDau_eta");
 TTreeReaderValue<std::vector<std::vector<int>>> pChg(reader, "genDau_chg");
 TTreeReaderValue<std::vector<std::vector<int>>> pPid(reader, "genDau_pid");  
 
-TTreeReaderValue<std::vector<Float_t>> jPt(reader, "getPt");
+TTreeReaderValue<std::vector<Float_t>> jPt(reader, "genJetPt");
 TTreeReaderValue<std::vector<Float_t>> jEta(reader, "genJetEta");
 TTreeReaderValue<std::vector<Float_t>> jPhi(reader, "genJetPhi");
 TTreeReaderValue<std::vector<int>> jMult(reader, "genJetChargedMultiplicity");
@@ -66,26 +66,25 @@ bool isInPtBin(float currPt, float lowBound, float highBound) {
 
 // Jet eta <= 1.6, Jet pt >= 550 GeV
 bool jetPass(float jetEta, float jetPt) {
-    if (fabs(jetEta) <= 1.6 && jetPt >= 550) {return true;}
+    if (fabs(jetEta) < 1.6 && jetPt > 550) {return true;}
     else {return false;}
 }
 
 void initializeChain() {
 
     // Local chain (inclusive)
-    //chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_CP5_inclusive_1.root");
-    //chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_CP5_inclusive_2.root");
-    //chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_CP5_inclusive_3.root");
-    //chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_CP5_inclusive_*.root");
+    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_CP5_inclusive_1.root");
+    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_CP5_inclusive_2.root");
+    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_CP5_inclusive_3.root");
+    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_CP5_inclusive_*.root");
 
-
-    //Local chain
-    //chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root");
-    //chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1001.root");
+    // // Local chain
+    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1000.root");
+    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1001.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1002.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1003.root");
     // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_1004.root");
-   //chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_*.root");
+    // chain.Add("/Users/katherinexie/JetCollectivity_Fall2024/Pythia_CP5_SourceData/pp_highMultGen_nChGT60_*.root");
 
 
     // // Limited Server chain
@@ -96,10 +95,10 @@ void initializeChain() {
     //     chain.Add(str.c_str());
     // }
 
-    // Server chain
+    //Server chain
     chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_nChGT60_*.root");
 
-    // Server chain (Inclusive)
+    //Server chain (Inclusive)
     chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_CP5_inclusive_*.root");
     //chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_CP5_inclusive.root");
 
