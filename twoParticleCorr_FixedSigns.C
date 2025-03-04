@@ -100,7 +100,7 @@ void initializeChain() {
 
     //Server chain (Inclusive)
     chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_CP5_inclusive_*.root");
-    //chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_CP5_inclusive.root");
+    chain.Add("/storage1/users/aab9/Pythia8_CP5_PrivateGen_April27/pp_highMultGen_CP5_inclusive.root");
 
     TObjArray *fileList = chain.GetListOfFiles();
 
@@ -393,7 +393,7 @@ void twoParticleCorr_FixedSigns() {
         }
     }
 
-    TFile *fout = new TFile("fullRun_RemovedFile_FixedSigns.root", "recreate"); // Creating output file
+    TFile *fout = new TFile("fullRun_FixedSigns.root", "recreate"); // Creating output file
 
     // Saving histograms to output file
     hJetPass->Write();
